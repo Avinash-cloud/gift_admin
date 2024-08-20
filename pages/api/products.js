@@ -45,7 +45,7 @@ export default async function handle(req, res) {
   
   if (method === 'PUT') {
     const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id} = req.body;
-    console.log( req.body)
+    console.log("put data is", req.body)
     await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints});
     res.json(true);
   }
