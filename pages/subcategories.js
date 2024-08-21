@@ -3,57 +3,62 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { withSwal } from 'react-sweetalert2';
 
-function Categories({ swal }) {
-  const [editedCategory, setEditedCategory] = useState(null);
+function SubCategories({ swal }) {
+  const [editedSubCategory, setEditedSubCategory] = useState(null);
   const [name, setName] = useState('');
   const [parentCategory, setParentCategory] = useState('');
-  const [categories, setCategories] = useState([]);
-  const [properties, setProperties] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [property, setproperty] = useState([]);
+
   useEffect(() => {
-    fetchCategories();
-  }, [])
-  function fetchCategories() {
-    axios.get('/api/categories').then(result => {
-      setCategories(result.data);
+    fetchSubCategories();
+  }, []);
+
+  function fetchSubCategories() {
+    axios.get('/api/subcategories').then(result => {
+      setSubCategories(result.data);
     });
   }
-  async function saveCategory(ev) {
+
+  async function saveSubCategory(ev) {
     ev.preventDefault();
     const data = {
       name,
       parentCategory,
-      properties: properties.map(p => ({
+      property: property.map(p => ({
         name: p.name,
         values: p.values.split(','),
       })),
     };
-    if (editedCategory) {
-      data._id = editedCategory._id;
-      await axios.put('/api/categories', data);
-      setEditedCategory(null);
+    if (editedSubCategory) {
+      data._id = editedSubCategory._id;
+      await axios.put('/api/subcategories', data);
+      setEditedSubCategory(null);
     } else {
-      await axios.post('/api/categories', data);
+      await axios.post('/api/subcategories', data);
     }
     setName('');
     setParentCategory('');
-    setProperties([]);
-    fetchCategories();
+    setproperty([]);
+    fetchSubCategories();
   }
-  function editCategory(category) {
-    setEditedCategory(category);
-    setName(category.name);
-    setParentCategory(category.parent?._id);
-    setProperties(
-      category.properties.map(({ name, values }) => ({
+
+  function editSubCategory(subCategory) {
+    setEditedSubCategory(subCategory);
+    setName(subCategory.name);
+    setParentCategory(subCategory.parent?._id);
+    setproperty(
+      subCategory.property.map(({ name, values }) => ({
         name,
         values: values.join(',')
       }))
     );
   }
-  function deleteCategory(category) {
+
+  function deleteSubCategory(subCategory) {
     swal.fire({
       title: 'Are you sure?',
-      text: `Do you want to delete ${category.name}?`,
+      text: `Do you want to delete ${subCategory.name}?`,
       showCancelButton: true,
       cancelButtonText: 'Cancel',
       confirmButtonText: 'Yes, Delete!',
@@ -61,79 +66,84 @@ function Categories({ swal }) {
       reverseButtons: true,
     }).then(async result => {
       if (result.isConfirmed) {
-        const { _id } = category;
-        await axios.delete('/api/categories?_id=' + _id);
-        fetchCategories();
+        const { _id } = subCategory;
+        await axios.delete('/api/subcategories?_id=' + _id);
+        fetchSubCategories();
       }
     });
   }
+
   function addProperty() {
-    setProperties(prev => {
+    setproperty(prev => {
       return [...prev, { name: '', values: '' }];
     });
   }
+
   function handlePropertyNameChange(index, property, newName) {
-    setProperties(prev => {
-      const properties = [...prev];
-      properties[index].name = newName;
-      return properties;
+    setproperty(prev => {
+      const property = [...prev];
+      property[index].name = newName;
+      return property;
     });
   }
+
   function handlePropertyValuesChange(index, property, newValues) {
-    setProperties(prev => {
-      const properties = [...prev];
-      properties[index].values = newValues;
-      return properties;
+    setproperty(prev => {
+      const property = [...prev];
+      property[index].values = newValues;
+      return property;
     });
   }
+
   function removeProperty(indexToRemove) {
-    setProperties(prev => {
+    setproperty(prev => {
       return [...prev].filter((p, pIndex) => {
         return pIndex !== indexToRemove;
       });
     });
   }
+
   return (
     <Layout>
-      <h1>Categories</h1>
+      <h1>SubCategories</h1>
       <label>
-        {editedCategory
-          ? `Edit category ${editedCategory.name}`
-          : 'Create new category'}
+        {editedSubCategory
+          ? `Edit sub-category ${editedSubCategory.name}`
+          : 'Create new sub-category'}
       </label>
-      <form onSubmit={saveCategory}>
+      <form onSubmit={saveSubCategory}>
         <div className="flex gap-1">
           <input
             type="text"
-            placeholder={'Category name'}
+            placeholder={'Sub-category name'}
             onChange={ev => setName(ev.target.value)}
             value={name} />
           <select
             onChange={ev => setParentCategory(ev.target.value)}
             value={parentCategory}>
             <option value="">No parent category</option>
-            {categories.length > 0 && categories.map(category => (
+            {subCategories.length > 0 && subCategories.map(category => (
               <option key={category._id} value={category._id}>{category.name}</option>
             ))}
           </select>
         </div>
         <div className="mb-2">
-          <label className="block">Properties</label>
+          <label className="block">property</label>
           <button
             onClick={addProperty}
             type="button"
             className="btn-default text-sm mb-2">
-            Add  property
+            Add new property
           </button>
-          {properties.length > 0 && properties.map((property, index) => (
+          {property.length > 0 && property.map((property, index) => (
             <div key={index} className="flex gap-1 mb-2">
-              <input type="text"                
+              <input type="text"
                 className="mb-0"
                 onChange={ev => handlePropertyNameChange(index, property, ev.target.value)}
                 value={property.name}
                 placeholder="property name (example: color)" />
 
-              {/* <input type="text"
+              <input type="text"
                 className="mb-0"
                 onChange={ev =>
                   handlePropertyValuesChange(
@@ -141,7 +151,7 @@ function Categories({ swal }) {
                     property, ev.target.value
                   )}
                 value={property.values}
-                placeholder="values, comma separated" /> */}
+                placeholder="values, comma separated" />
 
               <button
                 onClick={() => removeProperty(index)}
@@ -153,14 +163,14 @@ function Categories({ swal }) {
           ))}
         </div>
         <div className="flex gap-1">
-          {editedCategory && (
+          {editedSubCategory && (
             <button
               type="button"
               onClick={() => {
-                setEditedCategory(null);
+                setEditedSubCategory(null);
                 setName('');
                 setParentCategory('');
-                setProperties([]);
+                setproperty([]);
               }}
               className="btn-default">Cancel</button>
           )}
@@ -170,57 +180,29 @@ function Categories({ swal }) {
           </button>
         </div>
       </form>
-      {!editedCategory && (
-        // <table className="">
-        //   <thead>
-        //   <tr>
-        //     <td>Category name</td>
-        //     <td>Parent category</td>
-        //     <td></td>
-        //   </tr>
-        //   </thead>
-        //   <tbody>
-        //   {categories.length > 0 && categories.map(category => (
-        //     <tr key={category._id}>
-        //       <td>{category.name}</td>
-        //       <td>{category?.parent?.name}</td>
-        //       <td>
-        //         <button
-        //           onClick={() => editCategory(category)}
-        //           className="btn-default mr-1"
-        //         >
-        //           Edit
-        //         </button>
-        //         <button
-        //           onClick={() => deleteCategory(category)}
-        //           className="btn-red">Delete</button>
-        //       </td>
-        //     </tr>
-        //   ))}
-        //   </tbody>
-        // </table>
+      {!editedSubCategory && (
         <table className="w-full border-collapse border border-gray-300">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Category name</th>
+              <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Sub-category name</th>
               <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Parent category</th>
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {categories.length > 0 && categories.map(category => (
-              <tr key={category._id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-2 text-gray-800">{category.name}</td>
-                <td className=" border border-gray-300 px-4 py-2 text-gray-800">{category?.parent?.name}</td>
-                <td className=" border border-gray-300 px-4 py-2 flex justify-center">
+            {subCategories.length > 0 && subCategories.map(subCategory => (
+              <tr key={subCategory._id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2 text-gray-800">{subCategory.name}</td>
+                <td className="border border-gray-300 px-4 py-2 text-gray-800">{subCategory?.parent?.name}</td>
+                <td className="border border-gray-300 px-4 py-2 flex justify-center">
                   <button
-                    onClick={() => editCategory(category)}
+                    onClick={() => editSubCategory(subCategory)}
                     className="btn-default mr-2"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => deleteCategory(category)}
+                    onClick={() => deleteSubCategory(subCategory)}
                     className="btn-red"
                   >
                     Delete
@@ -230,12 +212,11 @@ function Categories({ swal }) {
             ))}
           </tbody>
         </table>
-
       )}
     </Layout>
   );
 }
 
 export default withSwal(({ swal }, ref) => (
-  <Categories swal={swal} />
+  <SubCategories swal={swal} />
 ));

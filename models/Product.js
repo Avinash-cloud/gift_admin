@@ -1,4 +1,5 @@
 import mongoose, {model, Schema, models} from "mongoose";
+import { Unique } from "typeorm";
 
 const ProductSchema = new Schema({
   title: {
@@ -31,10 +32,14 @@ const ProductSchema = new Schema({
   },
   category: {type:mongoose.Types.ObjectId, ref:'Category'},
   properties: {type:Object},
+
+  subcategory: {type:mongoose.Types.ObjectId, ref:'SubCategory'},
+  property: {type:Object},
+
   sku: {
     type: String,
     trim: true,
-    required: true
+    
   },
   shortDescriptionPoints:{
     type: [String], // Array of image URLs

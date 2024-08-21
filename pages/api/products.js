@@ -25,7 +25,9 @@ export default async function handle(req, res) {
       stockQuantity,
       sku,
       shortDescriptionPoints
+      ,subcategory,property
     } = req.body;
+    console.log("at creation" ,req.body)
   
     const productDoc = await Product.create({
       title,
@@ -38,15 +40,16 @@ export default async function handle(req, res) {
       stockQuantity,
       sku,
       shortDescriptionPoints
+      ,subcategory,property
     });
   
     res.json(productDoc);
   }
   
   if (method === 'PUT') {
-    const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id} = req.body;
+    const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id,subcategory,property} = req.body;
     console.log("put data is", req.body)
-    await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints});
+    await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints,subcategory,property});
     res.json(true);
   }
 

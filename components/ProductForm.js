@@ -14,6 +14,8 @@ export default function ProductForm({
   images: existingImages,
   category: assignedCategory,
   properties: assignedProperties,
+  subcategory: assignedSubcategory,
+  property: assignedProperty,
   sku: existingSku,
   shortDescriptionPoints: existingShortDescriptionPoints, // New prop for short description points
 }) {
@@ -27,6 +29,11 @@ export default function ProductForm({
   const [productProperties, setProductProperties] = useState(
     assignedProperties || {}
   );
+  const [subcategory, setSubcategory] = useState(assignedSubcategory || "");
+const [productProperty, setProductProperty] = useState(
+  assignedProperty || {}
+);
+
   const [price, setPrice] = useState(existingPrice || "");
   const [discountedPrice, setDiscountedPrice] = useState(
     existingDiscountedPrice || ""
@@ -36,6 +43,7 @@ export default function ProductForm({
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubCategories] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,6 +51,13 @@ export default function ProductForm({
       setCategories(result.data);
     });
   }, []);
+
+  useEffect(() => {
+    axios.get("/api/subcategories").then((result) => {
+      setSubCategories(result.data);
+    });
+  }, []);
+
 
   async function saveProduct(ev) {
     ev.preventDefault();
@@ -56,6 +71,8 @@ export default function ProductForm({
       images,
       category,
       properties: productProperties,
+      subcategory,
+      property: productProperty,
       sku,
     };
     console.log(data);
@@ -94,7 +111,7 @@ export default function ProductForm({
   }
 
   function setProductProp(propName, value) {
-    setProductProperties((prev) => {
+    setProductProperty((prev) => {
       const newProductProps = { ...prev };
       newProductProps[propName] = value;
       return newProductProps;
@@ -113,12 +130,6 @@ export default function ProductForm({
     });
   }
 
-  const [selectedProperty, setSelectedProperty] = useState('');
-
-const handlePropertyChange = (propertyName) => {
-  setSelectedProperty(propertyName);
-};
-
   function removePoint(index) {
     setShortDescriptionPoints((prev) => prev.filter((_, i) => i !== index));
   }
@@ -133,6 +144,19 @@ const handlePropertyChange = (propertyName) => {
       );
       propertiesToFill.push(...parentCat.properties);
       catInfo = parentCat;
+    }
+  }
+
+  const propertyToFill = [];
+  if (subcategories.length > 0 && subcategory) {
+    let subcatInfo = subcategories.find(({ _id }) => _id === subcategory);
+    propertyToFill.push(...subcatInfo.property);
+    while (subcatInfo?.parent?._id) {
+      const subparentCat = subcategories.find(
+        ({ _id }) => _id === subcatInfo?.parent?._id
+      );
+      propertyToFill.push(...subparentCat.property);
+      subcatInfo = subparentCat;
     }
   }
 
@@ -173,23 +197,67 @@ const handlePropertyChange = (propertyName) => {
           ))}
       </select>
 
-      {propertiesToFill.length > 0 && (
-  <div className="">
-    <label>Select Property</label>
-    <div>
-      <select
-        value={selectedProperty}
-        onChange={(ev) => handlePropertyChange(ev.target.value)}
-      >
-        {propertiesToFill.map((p) => (
-          <option key={p.name} value={p.name}>
-            {p.name[0].toUpperCase() + p.name.substring(1)}
-          </option>
-        ))}
+      <select value={productProperties} onChange={(ev) => setProductProperties(ev.target.value)}>
+        {propertiesToFill.length > 0 &&
+          propertiesToFill.map((p) => (
+            <option key={p.name} value={p.name}>{p.name}</option>
+          ))}
+
       </select>
-    </div>
-  </div>
-)}
+
+
+      {/* // <div key={p.name} className="">
+          //   <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
+          //   <div>
+          //     <select
+          //       value={productProperties[p.name]}
+          //       onChange={(ev) => setProductProp(p.name, ev.target.value)}
+          //     >
+          //       {p.values.map((v) => (
+          //         <option key={v} value={v}>
+          //           {v}
+          //         </option>
+          //       ))}
+          //     </select>
+          //   </div>
+          // </div> */}
+
+
+      <label>Subcategory</label>
+      <select value={subcategory} onChange={(ev) => setSubcategory(ev.target.value)}>
+        <option value="">Uncategorized</option>
+        {subcategories.length > 0 &&
+          subcategories.map((sc) => (
+            <option key={sc._id} value={sc._id}>
+              {sc.name}
+            </option>
+          ))}
+      </select>
+
+      {propertyToFill.length > 0 &&
+        propertyToFill.map((p) => (
+          <div key={p.name} className="">
+            <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
+            <div>
+              <select
+                value={productProperty[p.name]}
+                onChange={(ev) => setProductProp(p.name, ev.target.value)}
+              >
+                {p.values.map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        ))}
+
+
+
+
+
+
 
 
       <label>Photos</label>
@@ -260,12 +328,12 @@ const handlePropertyChange = (propertyName) => {
         </div>
       ))}
       <div>
-      <button type="button" onClick={addPoint} className="btn-secondary mb-4 btn-primary ">
-        Add Point
-      </button>
+        <button type="button" onClick={addPoint} className="btn-secondary mb-4 btn-primary ">
+          Add Point
+        </button>
 
       </div>
-      
+
 
       <label>Price (in USD)</label>
       <input

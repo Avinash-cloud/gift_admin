@@ -2,7 +2,7 @@ import multiparty from 'multiparty';
 import fs from 'fs';
 import path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
-import dbconnect from '../../lib/dbConnect';
+import {mongooseConnect} from "@/lib/mongoose";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -12,7 +12,7 @@ cloudinary.config({
 });
 
 export default async function handle(req, res) {
-  await dbconnect();
+  await mongooseConnect();
 
   const form = new multiparty.Form();
   const { fields, files } = await new Promise((resolve, reject) => {
