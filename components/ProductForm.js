@@ -30,9 +30,9 @@ export default function ProductForm({
     assignedProperties || {}
   );
   const [subcategory, setSubcategory] = useState(assignedSubcategory || "");
-const [productProperty, setProductProperty] = useState(
-  assignedProperty || {}
-);
+  const [productProperty, setProductProperty] = useState(
+    assignedProperty || {}
+  );
 
   const [price, setPrice] = useState(existingPrice || "");
   const [discountedPrice, setDiscountedPrice] = useState(
@@ -45,6 +45,27 @@ const [productProperty, setProductProperty] = useState(
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubCategories] = useState([]);
   const router = useRouter();
+
+
+
+
+
+
+
+
+
+  console.log("productProperties", productProperties)
+
+
+
+  console.log("productProperties", productProperties)
+
+
+
+
+
+
+
 
   useEffect(() => {
     axios.get("/api/categories").then((result) => {
@@ -147,6 +168,8 @@ const [productProperty, setProductProperty] = useState(
     }
   }
 
+  
+
   const propertyToFill = [];
   if (subcategories.length > 0 && subcategory) {
     let subcatInfo = subcategories.find(({ _id }) => _id === subcategory);
@@ -206,22 +229,24 @@ const [productProperty, setProductProperty] = useState(
       </select>
 
 
-      {/* // <div key={p.name} className="">
-          //   <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
-          //   <div>
-          //     <select
-          //       value={productProperties[p.name]}
-          //       onChange={(ev) => setProductProp(p.name, ev.target.value)}
-          //     >
-          //       {p.values.map((v) => (
-          //         <option key={v} value={v}>
-          //           {v}
-          //         </option>
-          //       ))}
-          //     </select>
-          //   </div>
-          // </div> */}
-
+      {/* {propertiesToFill.length > 0 &&
+        propertiesToFill.map((p) => (
+          <div key={p.name} className="">
+            <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
+            <div>
+              <select
+                value={productProperties[p.name]}
+                onChange={(ev) => setProductProp(p.name, ev.target.value)}
+              >
+                {p.values.map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        ))} */}
 
       <label>Subcategory</label>
       <select value={subcategory} onChange={(ev) => setSubcategory(ev.target.value)}>

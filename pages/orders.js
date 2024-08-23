@@ -33,9 +33,9 @@ export default function OrdersPage() {
       const isWithinDateRange = (!fromDate || orderDate >= from) && (!toDate || orderDate <= to);
       return (
         isWithinDateRange &&
-        order.line_items.some(item =>
-          item.price_data.product_data.name.toLowerCase().includes(search.toLowerCase())
-        )
+        // order.line_items.some(item =>
+          order.cart[0].title.toLowerCase().includes(search.toLowerCase())
+        // )
       );
     });
     setFilteredOrders(filtered);
@@ -195,8 +195,9 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Paid</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
-              <th className="border border-gray-300 px-4 py-2">Products</th>
-              <th className="border border-gray-300 px-4 py-2">Quantity</th>
+              <th className="border border-gray-300 px-4 py-2">Other Information</th>
+              <th className="border border-gray-300 px-4 py-2">Products & Quantity </th>
+              {/* <th className="border border-gray-300 px-4 py-2"></th> */}
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
@@ -204,13 +205,19 @@ export default function OrdersPage() {
             {displayOrders.length > 0 && displayOrders.map(order => (
               <tr key={order._id} className="border border-gray-300">
                 <td className="border border-gray-300 px-4 py-2">{(new Date(order.createdAt)).toLocaleString()}</td>
-                <td>{order.images}</td>
+                <td>
+
+                {order.cart?.map((item,index)=>(
+                   <img height="100px" width="100px" className='rounded-full' src={item.images} alt='images'/>
+                ))}
+
+                </td>
                 <td className={`border border-gray-300 px-4 py-2 ${order.paid ? 'text-green-600' : 'text-red-600'}`}>
                   {order.paid ? 'YES' : 'NO'}
                 </td>
-                <td></td>
+                <td className="border border-gray-300 px-4 py-2">{order.status}</td>
                 <td className="border border-gray-300 px-4 py-2">
-                  <div className="text-sm"><span className="font-bold">Name : </span>{order.name}</div>
+                  <div className="text-sm"><span className="font-bold">Name : </span>  {order.buyer_name}</div>
                   <div className="text-xs"><span className="font-bold">Email : </span>{order.email}</div>
                   <div className="text-xs"><span className="font-bold">Street Address : </span>{order.streetAddress}</div>
                   <div className="text-xs"><span className="font-bold">City : </span>{order.city}</div>
@@ -218,19 +225,25 @@ export default function OrdersPage() {
                   <div className="text-xs"><span className="font-bold">Country : </span>{order.country}</div>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {order.line_items.map((l, index) => (
-                    <div key={index} className="text-sm">
-                      {l.price_data?.product_data.name}
-                    </div>
-                  ))}
+                  <div className="text-sm"><span className="font-bold">Channel Order Id : </span>{order.channel_order_id}</div>
+                  <div className="text-xs"><span className="font-bold">Order ID : </span>
+                  <a className="text-blue-600" href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}>{order.order_id}</a></div>
+
+                  <div className="text-xs"><span className="font-bold">Shipment Id : </span>{order.shipment_id}</div>
+                  
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {order.line_items.map((l, index) => (
-                    <div key={index} className="text-sm">
-                      {l.quantity}
-                    </div>
-                  ))}
+                {order.cart?.map((item,index)=>(
+                  <>
+                  <div>Product is :{item.title} </div>
+                  <div>Quantity is :{item.quantity} </div>
+                  </>
+                  
+                ))}
                 </td>
+                {/* <td className="border border-gray-300 px-4 py-2">
+               
+                </td> */}
                 <td className="border border-gray-300 px-4 py-2">
                   <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                     <FontAwesomeIcon icon={faTimes} className="mr-2" />
