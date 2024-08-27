@@ -208,7 +208,7 @@ export default function OrdersPage() {
                 <td>
 
                 {order.cart?.map((item,index)=>(
-                   <img height="100px" width="100px" className='rounded-full' src={item.images} alt='images'/>
+                   <img key={index} height="100px" width="100px" className='rounded-full' src={item.images} alt='images'/>
                 ))}
 
                 </td>
