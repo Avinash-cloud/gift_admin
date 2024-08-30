@@ -13,7 +13,7 @@ export default function Products() {
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
-    axios.get('/api/products').then(response => {
+    axios.get("/api/products").then((response) => {
       setProducts(response.data);
     });
   }, []);
@@ -31,7 +31,7 @@ export default function Products() {
     setCurrentPage(0);
   };
 
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -46,44 +46,50 @@ export default function Products() {
     { label: "Description", key: "description" },
     { label: "Stock", key: "stockQuantity" },
     { label: "Price", key: "price" },
-    { label: "Discounted Price", key: "discountedPrice" }
+    { label: "Discounted Price", key: "discountedPrice" },
   ];
 
   return (
     <Layout>
-
-
-      <div className="mb-14">
-        <Link 
-        className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-        href={'/products/new'}>Add new product</Link>
+      <div className="mb-14 overflow-x-auto h-10">
+        <Link
+          className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          href={"/products/new"}
+        >
+          Add new product
+        </Link>
       </div>
 
-
-      <div className="justify-center space-x-14 flex m-4 h-10">
-        
-        <div>
-          <button className="rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">Upload via CSV</button>
+      <div className=" justify-center items-center gap-4 max-sm:justify-start  flex   overflow-x-auto h-auto w-full">
+        <div className="flex">
+          <button className="rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
+            Upload via CSV
+          </button>
         </div>
 
         <div>
-          <label htmlFor="" className="mx-4 font-semibold">Search</label>
-        <input
-          type="search"
-          placeholder="Search by title"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="border px-2 py-1 rounded w-48"
-        />
+          <label htmlFor="" className="mx-4 font-semibold">
+            Search
+          </label>
+          <input
+            type="search"
+            placeholder="Search by title"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="border px-2 py-1 rounded w-48"
+          />
         </div>
 
         <div className="flex space-x-2">
-          <CSVLink 
-            data={products} 
-            headers={headers} 
-            filename={"products.csv"} 
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+          <CSVLink
+            data={products}
+            headers={headers}
+            filename={"products.csv"}
+            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 inline-block align-middle text-center"
+          >
+            
             Export to CSV
+            
           </CSVLink>
 
           <ReactHTMLTableToExcel
@@ -105,9 +111,8 @@ export default function Products() {
           </a>
         </div>
 
-
-        <div className="mb-4 flex">
-          <label  className="mr-2">Show</label>
+        <div className="mb-4">
+          <label className="mr-2">Show</label>
           <select
             id="itemsPerPage"
             value={itemsPerPage}
@@ -118,79 +123,131 @@ export default function Products() {
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
-          
         </div>
       </div>
 
-      <table id="products-table" className="border-collapse w-full">
-        <thead className="bg-gray-50">
-          <tr className="divide-x divide-gray-200">
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              <span>SKU ID</span>
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              <span>Image</span>
-            </th>
-            <th scope="col" className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500">
-              Title
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              Description
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              Stock
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              Price
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              Discounted Price
-            </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {currentPageData.map((product) => (
-            <tr key={product.id} className="divide-x divide-gray-200">
-              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">{product.sku}</td>
-              <td className="whitespace-nowrap px-4 py-4">
-                <div className="flex items-center">
-                  <div className="h-16 w-16 flex-shrink-0">
-                    <img
-                      className="h-16 w-16 rounded-full object-cover"
-                      src={product.images[0]}
-                      alt=""
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                    <div className="text-sm text-gray-500">{product.email}</div>
-                  </div>
-                </div>
-              </td>
-              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900"><a target="_blank" href={`http://www.internationalgift.in/product/${product._id}`}>{product.title}</a></td>
-              <td className="px-4 py-4">
-                <div className="text-sm text-gray-500">{product.description}</div>
-              </td>
-              <td className="px-4 py-4">
-                <div className="text-sm text-gray-500">{product.stockQuantity}</div>
-              </td>
-              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">{product.price}</td>
-              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">{product.discountedPrice}</td>
-              <td className="whitespace-nowrap px-4 py-4 text-sm font-medium space-x-2">
-                <Link className="btn-default hover:text-blue-500" href={'/products/edit/' + product._id}>
-                  Edit
-                </Link>
-                <Link className="btn-red hover:text-red-500" href={'/products/delete/' + product._id}>
-                  Delete
-                </Link>
-              </td>
+      <div className="overflow-x-auto">
+        <table id="products-table" className="border-collapse w-full mt-11">
+          <thead className="bg-gray-50">
+            <tr className="divide-x divide-gray-200">
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                <span>SKU ID</span>
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                <span>Image</span>
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Title
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300  py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Description
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Stock
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Price
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Discounted Price
+              </th>
+              <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white">
+            {currentPageData.map((product) => (
+              <tr key={product.id} className="divide-x divide-gray-200">
+                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                  {product.sku}
+                </td>
+                <td className="whitespace-nowrap px-4 py-4">
+                  <div className="flex items-center">
+                    <div className="h-16 w-16 flex-shrink-0">
+                      <img
+                        className="h-16 w-16 rounded-full object-cover"
+                        src={product.images[0]}
+                        alt=""
+                      />
+                    </div>
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {product.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {product.email}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td className=" px-1 py-1 text-sm text-gray-900  overflow-auto max-h-2">
+                  <a
+                    target="_blank"
+                    href={`https://www.internationalgift.in/product/${product._id}`}
+                  >
+                    {product.title}
+                  </a>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="text-sm text-gray-500 overflow-auto max-h-24">
+                    {product.description}
+                  </div>
+                </td>
+                <td className="px-4 py-4">
+                  <div className="text-sm text-gray-500">
+                    {product.stockQuantity}
+                  </div>
+                </td>
+                <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                  {product.price}
+                </td>
+                <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                  {product.discountedPrice}
+                </td>
+                <td className="whitespace-nowrap px-4 py-4 text-sm font-medium space-x-2">
+                  <Link
+                    className="btn-default hover:text-blue-500"
+                    href={"/products/edit/" + product._id}
+                  >
+                    Edit
+                  </Link>
+                  <Link
+                    className="btn-red hover:text-red-500"
+                    href={"/products/delete/" + product._id}
+                  >
+                    Delete
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <ReactPaginate
         previousLabel={"previous"}

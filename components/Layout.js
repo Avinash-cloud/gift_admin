@@ -20,9 +20,10 @@ export default function Layout({ children }) {
   return (
   <>
   
-    <div className="bg-teal-600 container-auto p-4">
+    <div className="bg-teal-600 max-w-full p-4 " >
       <img src="../../international-gift-logo-inline.png" width={200} height={200} />
     </div>
+
     <div className="bg-bgGray min-h-screen ">
 
       <div className="block md:hidden flex items-center p-4">
@@ -37,7 +38,7 @@ export default function Layout({ children }) {
       </div>
       <div className="flex">
         <Nav show={showNav} />
-        <div className="flex-grow p-4 border-l-4 border-teal-600 min-h-screen  ">
+        <div className="flex-grow p-4 border-l-4 border-teal-600 min-h-screen w-screen ">
           {children}
         </div>
       </div>
