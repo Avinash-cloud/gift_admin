@@ -17,7 +17,8 @@ export default function ProductForm({
   subcategory: assignedSubcategory,
   property: assignedProperty,
   sku: existingSku,
-  shortDescriptionPoints: existingShortDescriptionPoints, // New prop for short description points
+  shortDescriptionPoints: existingShortDescriptionPoints,
+  type:existingtype// New prop for short description points
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [stockQuantity, setStockQuantity] = useState(existingStock || "");
@@ -25,6 +26,7 @@ export default function ProductForm({
   const [shortDescriptionPoints, setShortDescriptionPoints] = useState(
     existingShortDescriptionPoints || []
   ); // State for short description points
+  const [type,setType]=useState(existingtype || "")
   const [category, setCategory] = useState(assignedCategory || "");
   const [productProperties, setProductProperties] = useState(
     assignedProperties || {}
@@ -86,7 +88,8 @@ export default function ProductForm({
       title,
       stockQuantity,
       description,
-      shortDescriptionPoints, // Include short description points in the data
+      shortDescriptionPoints,
+      type, // Include short description points in the data
       price,
       discountedPrice,
       images,
@@ -208,6 +211,13 @@ export default function ProductForm({
         value={stockQuantity}
         onChange={(ev) => setStockQuantity(ev.target.value)}
       />
+      <label>Type</label>
+      <select value={type} onChange={(ev) => setType(ev.target.value)}>
+        <option value="NewArrival">New Arrival</option>
+        <option value="BestSeller">Best Seller</option>
+        <option value="MonthlyBestSell">Monthly Best Sell</option>
+        
+      </select>
 
       <label>Category</label>
       <select value={category} onChange={(ev) => setCategory(ev.target.value)}>

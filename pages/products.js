@@ -60,7 +60,7 @@ export default function Products() {
         </Link>
       </div>
 
-      <div className=" justify-center items-center gap-4 max-sm:justify-start  flex   overflow-x-auto h-auto w-full">
+      <div className="justify-center items-center gap-4 max-sm:justify-start flex overflow-x-auto h-auto w-full">
         <div className="flex">
           <button className="rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
             Upload via CSV
@@ -87,9 +87,7 @@ export default function Products() {
             filename={"products.csv"}
             className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 inline-block align-middle text-center"
           >
-            
             Export to CSV
-            
           </CSVLink>
 
           <ReactHTMLTableToExcel
@@ -100,9 +98,10 @@ export default function Products() {
             sheet="tablexls"
             buttonText="Export to Excel"
           />
+
           <a
             href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-              JSON.stringify(products)
+              JSON.stringify(products, null, 2)
             )}`}
             download="products.txt"
             className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
@@ -150,7 +149,7 @@ export default function Products() {
               </th>
               <th
                 scope="col"
-                className="border border-gray-300  py-3.5 text-left text-sm font-medium text-gray-500"
+                className="border border-gray-300 py-3.5 text-left text-sm font-medium text-gray-500"
               >
                 Description
               </th>
@@ -182,7 +181,7 @@ export default function Products() {
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {currentPageData.map((product) => (
-              <tr key={product.id} className="divide-x divide-gray-200">
+              <tr key={product._id} className="divide-x divide-gray-200">
                 <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
                   {product.sku}
                 </td>
@@ -192,23 +191,17 @@ export default function Products() {
                       <img
                         className="h-16 w-16 rounded-full object-cover"
                         src={product.images[0]}
-                        alt=""
+                        alt={product.title}
                       />
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {product.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {product.email}
-                      </div>
-                    </div>
+                    
                   </div>
                 </td>
-                <td className=" px-1 py-1 text-sm text-gray-900  overflow-auto max-h-2">
+                <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2">
                   <a
                     target="_blank"
                     href={`https://www.internationalgift.in/product/${product._id}`}
+                    rel="noopener noreferrer"
                   >
                     {product.title}
                   </a>
@@ -231,17 +224,14 @@ export default function Products() {
                 </td>
                 <td className="whitespace-nowrap px-4 py-4 text-sm font-medium space-x-2">
                   <Link
-                    className="btn-default hover:text-blue-500"
-                    href={"/products/edit/" + product._id}
+                    className="text-blue-500 hover:text-blue-600"
+                    href={`/products/edit/${product._id}`}
                   >
                     Edit
                   </Link>
-                  <Link
-                    className="btn-red hover:text-red-500"
-                    href={"/products/delete/" + product._id}
-                  >
+                  <button className="text-red-500 hover:text-red-600">
                     Delete
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}
@@ -249,20 +239,23 @@ export default function Products() {
         </table>
       </div>
 
-      <ReactPaginate
-        previousLabel={"previous"}
-        nextLabel={"next"}
-        breakLabel={"..."}
-        breakClassName={"break-me"}
-        pageCount={pageCount}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination"}
-        subContainerClassName={"pages pagination"}
-        activeClassName={"active"}
-        className="flex mt-10 space-x-10 float-right"
-      />
+      <div className="flex justify-center mt-4">
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          breakLabel={"..."}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          previousLinkClassName={"pagination__link"}
+          nextLinkClassName={"pagination__link"}
+          disabledClassName={"pagination__link--disabled"}
+          activeClassName={"pagination__link--active"}
+          className="flex space-x-2"
+        />
+      </div>
     </Layout>
   );
 }

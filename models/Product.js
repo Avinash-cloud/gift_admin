@@ -46,6 +46,10 @@ const ProductSchema = new Schema({
     
 
   },
+  type:{
+    type: String,
+    
+  },
   stockQuantity: {
     type: String,
     min: 0,

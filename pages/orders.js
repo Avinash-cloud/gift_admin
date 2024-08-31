@@ -34,9 +34,7 @@ export default function OrdersPage() {
         (!fromDate || orderDate >= from) && (!toDate || orderDate <= to);
       return (
         isWithinDateRange &&
-        // order.line_items.some(item =>
         order.cart[0].title.toLowerCase().includes(search.toLowerCase())
-        // )
       );
     });
     setFilteredOrders(filtered);
@@ -58,23 +56,20 @@ export default function OrdersPage() {
     const exportData = filteredOrders.map((order) => ({
       Date: new Date(order.createdAt).toLocaleString(),
       Paid: order.paid ? "YES" : "NO",
-      Name: order.name,
+      Name: order.buyer_name,
       Email: order.email,
       StreetAddress: order.streetAddress,
       City: order.city,
       PostalCode: order.postalCode,
       Country: order.country,
-      Products: order.line_items
-        .map((item) => item.price_data.product_data.name)
-        .join(", "),
-      Quantity: order.line_items.map((item) => item.quantity).join(", "),
+      Products: order.cart.map((item) => item.title).join(", "),
+      Quantity: order.cart.map((item) => item.quantity).join(", "),
     }));
 
     if (format === "csv" || format === "excel") {
       const ws = XLSX.utils.json_to_sheet(exportData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Orders");
-      const fileType = format === "csv" ? "csv" : "xlsx";
       const fileExtension = format === "csv" ? ".csv" : ".xlsx";
       XLSX.writeFile(wb, `Orders${fileExtension}`);
     } else if (format === "txt") {
@@ -114,18 +109,18 @@ export default function OrdersPage() {
         <div><strong>Date:</strong> ${new Date(
           order.createdAt
         ).toLocaleString()}</div>
-        <div><strong>Name:</strong> ${order.name}</div>
+        <div><strong>Name:</strong> ${order.buyer_name}</div>
         <div><strong>Email:</strong> ${order.email}</div>
-        <div><strong>Street Address:</strong> ${order.streetAddress}</div>
+        <div><strong>Street Address:</strong> ${order.address}</div>
         <div><strong>City:</strong> ${order.city}</div>
         <div><strong>Postal Code:</strong> ${order.postalCode}</div>
         <div><strong>Country:</strong> ${order.country}</div>
         <h2>Products</h2>
-        ${order.line_items
+        ${order.cart
           .map(
             (item) => `
           <div>
-            <strong>Product:</strong> ${item.price_data?.product_data.name} <br />
+            <strong>Product:</strong> ${item.title} <br />
             <strong>Quantity:</strong> ${item.quantity}
           </div>
         `
@@ -146,6 +141,11 @@ export default function OrdersPage() {
     document.body.removeChild(element);
   };
 
+  const cancleOrder=async (id)=>{
+    await axios.post(`/api/cancleorder/`,{id});
+    
+  }
+
   const handleResetDates = () => {
     setFromDate("");
     setToDate("");
@@ -163,7 +163,7 @@ export default function OrdersPage() {
           onChange={handleSearchChange}
           className="border px-2 py-1 rounded"
         />
-        <div className=" flex gap-11 justify-center w-1/3">
+        <div className="flex gap-11 justify-center w-1/3">
           <button
             onClick={() => handleExport("csv")}
             className="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
@@ -183,7 +183,7 @@ export default function OrdersPage() {
             Export Txt
           </button>
         </div>
-        <div className=" flex gap-11 justify-center w-1/3">
+        <div className="flex gap-11 justify-center w-1/3">
           <input
             type="date"
             value={fromDate}
@@ -198,7 +198,7 @@ export default function OrdersPage() {
           />
           <button
             onClick={handleResetDates}
-            className=" w-full ml-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded"
+            className="w-full ml-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded"
           >
             Reset Dates
           </button>
@@ -218,7 +218,7 @@ export default function OrdersPage() {
       <div className="overflow-x-auto">
         <table className="border-collapse w-full mt-11">
           <thead>
-            <tr className="bg-gray-100 ">
+            <tr className="bg-gray-100">
               <th className="border border-gray-300 px-4 py-2">Date</th>
               <th className="border border-gray-300 px-4 py-2">Image</th>
               <th className="border border-gray-300 px-4 py-2">Paid</th>
@@ -230,7 +230,6 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2 w-11/12">
                 Products & Quantity{" "}
               </th>
-              {/* <th className="border border-gray-300 px-4 py-2"></th> */}
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
@@ -241,128 +240,71 @@ export default function OrdersPage() {
                   <td className="border border-gray-300 px-4 py-2">
                     {new Date(order.createdAt).toLocaleString()}
                   </td>
-                  <td className="w-1/3 p-9">
-                  <div className="flex gap-4">
-                    {order.cart?.map((item, index) => (
-                      
-                      <img
-                        height="100px"
-                        width="100px"
-                        className="rounded-full overflow-auto h-11"
-                        src={item.images[0]}
-                        alt="images"
-                      />
-                      
-                    ))}
-                    </div>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <img
+                      src={order.cart[0].images[0]}
+                      alt="Product Image"
+                      className="h-20 w-20 object-cover"
+                    />
                   </td>
-                  
-                  <td
-                    className={`border border-gray-300 px-4 py-2 ${
-                      order.paid ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
+                  <td className="border border-gray-300 px-4 py-2">
                     {order.paid ? "YES" : "NO"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {order.status}
+                    {order.status || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    <div className="text-sm">
-                      <span className="font-bold">Name : </span>{" "}
-                      {order.buyer_name}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">Email : </span>
-                      {order.email}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">Street Address : </span>
-                      {order.address}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">City : </span>
-                      {order.city}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">Postal Code : </span>{" "}
-                      {order.postalCode}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">Country : </span>
-                      {order.country}
-                    </div>
+                    <div>Name : {order.buyer_name}</div> <br />
+                    <div>Email: {order.email}</div>
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2 w-2/4">
+                    {order.address}, {order.city},{" "}
+                    {order.postalCode}
+                    <br />
+                    {order.country}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    <div className="text-sm">
-                      <span className="font-bold">Channel Order Id : </span>
-                      {order.channel_order_id}
-                    </div>
-                    <div className="text-xs">
-                      <span className="font-bold">Order ID : </span>
-                      <a
-                        className="text-blue-600"
-                        href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}
-                      >
-                        {order.order_id}
-                      </a>
-                    </div>
-
-                    <div className="text-xs">
-                      <span className="font-bold">Shipment Id : </span>
-                      {order.shipment_id}
+                    <div className="w-60">
+                    {order.cart.map((item, index) => (
+                      <div className="overflow-auto w-full" key={index}>
+                        <div>Products : {item.title}</div>{" "}
+                        <div> Quantity : {item.quantity}</div>
+                        <br />
+                      </div>
+                    ))}
                     </div>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 w-1/3 ">
-                    <div className="  ">
-                      {order.cart?.map((item, index) => (
-                        <div className="">
-                          <div className="overflow-auto max-h-24 max-md:w-96">
-                            Product is :{item.title}{" "}
-                          </div>
-
-                          <div className="overflow-auto max-h-24 max-md:w-96">Quantity is :{item.quantity} </div>
-                        </div>
-                      ))}
-                    </div>
-                  </td>
-                  {/* <td className="border border-gray-300 px-4 py-2">
-               
-                </td> */}
-                  <td className="border border-gray-300 px-4 py-2">
-                    <div className="flex">
-                    <button className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                      <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                      Cancel
-                    </button>
+                  <td className="border border-gray-300 px-4 py-2 flex">
                     <button
                       onClick={() => generatePDF(order)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
                     >
-                      <FontAwesomeIcon icon={faDownload} className="mr-2" />
                       Invoice
                     </button>
-                    </div>
+                    <button
+                      onClick={() => cancleOrder(order.order_id)}
+                      className="ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                    >
+                      Cancle
+                    </button>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={handlePageChange}
+          containerClassName={"paginationBttns"}
+          previousLinkClassName={"previousBttn"}
+          nextLinkClassName={"nextBttn"}
+          disabledClassName={"paginationDisabled"}
+          activeClassName={"paginationActive"}
+          className="flex space-x-2"
+        />
       </div>
-
-      <ReactPaginate
-        previousLabel={"Previous"}
-        className="flex gap-6 float-right my-6 py-6"
-        nextLabel={"Next"}
-        pageCount={pageCount}
-        onPageChange={handlePageChange}
-        containerClassName={"pagination"}
-        activeClassName={"active"}
-        pageClassName={"page"}
-        previousClassName={"previous"}
-        nextClassName={"next"}
-        disabledClassName={"disabled"}
-      />
     </Layout>
   );
 }
