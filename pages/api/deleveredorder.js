@@ -38,7 +38,7 @@ export default async function handler(req, res) {
       // Update the order status to "canceled" in MongoDB where order_id matches
       const updatedOrder = await Order.updateOne(
         { _id: id },
-        { $set: { status: "canceled" } }
+        { $set: { status: "Delivered" } }
       );
       
       if (!updatedOrder) {

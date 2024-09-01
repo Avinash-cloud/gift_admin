@@ -8,8 +8,11 @@ export default async function handle(req, res) {
   // await isAdminRequest(req,res);
 
   if (method === 'GET') {
-    if (req.query?.id) {
-      res.json(await Product.findOne({_id:req.query.id}));
+    if (req.query?.ids) {
+      const idsArray = req.query.ids.split(',');
+      res.json(await Product.find({ _id: { $in: idsArray } }));
+    } else if (req.query?.id) {
+      res.json(await Product.findOne({ _id: req.query.id }));
     } else {
       res.json(await Product.find());
     }

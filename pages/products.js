@@ -229,9 +229,12 @@ export default function Products() {
                   >
                     Edit
                   </Link>
-                  <button className="text-red-500 hover:text-red-600">
+                  <Link
+                    className="text-red-500 hover:text-red-600"
+                    href={`/products/delete/${product._id}`}
+                  >
                     Delete
-                  </button>
+                    </Link>
                 </td>
               </tr>
             ))}

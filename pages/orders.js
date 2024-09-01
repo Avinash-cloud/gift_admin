@@ -146,6 +146,12 @@ export default function OrdersPage() {
     
   }
 
+  const deleveredOrder=async (id)=>{
+    await axios.post(`/api/deleveredorder/`,{id});
+    
+  }
+
+
   const handleResetDates = () => {
     setFromDate("");
     setToDate("");
@@ -277,12 +283,18 @@ export default function OrdersPage() {
                   <td className="border border-gray-300 px-4 py-2 flex">
                     <button
                       onClick={() => generatePDF(order)}
-                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
                     >
                       Invoice
                     </button>
                     <button
-                      onClick={() => cancleOrder(order.order_id)}
+                      onClick={() => deleveredOrder(order._id)}
+                      className="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+                    >
+                      Delivered
+                    </button>
+                    <button
+                      onClick={() => cancleOrder(order._id)}
                       className="ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
                     >
                       Cancle
