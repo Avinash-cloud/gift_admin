@@ -58,7 +58,7 @@ export default function OrdersPage() {
       Paid: order.paid ? "YES" : "NO",
       Name: order.buyer_name,
       Email: order.email,
-      StreetAddress: order.streetAddress,
+      StreetAddress: order.address,
       City: order.city,
       PostalCode: order.postalCode,
       Country: order.country,
@@ -230,6 +230,9 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Paid</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
+              <th className="border border-gray-300 px-4 py-2">
+                Address Information
+              </th>
               <th className="border border-gray-300 px-4 py-2">
                 Other Information
               </th>
