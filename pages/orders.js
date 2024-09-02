@@ -272,6 +272,13 @@ export default function OrdersPage() {
                     <br />
                     {order.country}
                   </td>
+                  <td className="border border-gray-300 px-4 py-2 w-2/4 text-sm">
+                    Order id : {order.order_id}
+                    <br/>
+                    Order Number :<a className="text-blue-400" href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}> {order.channel_order_id}</a>
+                    <br />
+                    Shipment Id : {order.shipment_id}
+                  </td>
                   <td className="border border-gray-300 px-4 py-2">
                     <div className="w-60">
                     {order.cart.map((item, index) => (
