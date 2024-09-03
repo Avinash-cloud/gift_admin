@@ -18,7 +18,8 @@ export default function ProductForm({
   property: assignedProperty,
   sku: existingSku,
   shortDescriptionPoints: existingShortDescriptionPoints,
-  type:existingtype// New prop for short description points
+  type: existingtype,
+  id: existingid,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [stockQuantity, setStockQuantity] = useState(existingStock || "");
@@ -26,7 +27,7 @@ export default function ProductForm({
   const [shortDescriptionPoints, setShortDescriptionPoints] = useState(
     existingShortDescriptionPoints || []
   ); // State for short description points
-  const [type,setType]=useState(existingtype || "")
+  const [type, setType] = useState(existingtype || "");
   const [category, setCategory] = useState(assignedCategory || "");
   const [productProperties, setProductProperties] = useState(
     assignedProperties || {}
@@ -42,32 +43,16 @@ export default function ProductForm({
   );
   const [images, setImages] = useState(existingImages || []);
   const [sku, setSku] = useState(existingSku || "");
+  const [id, setId] = useState(existingid || "");
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubCategories] = useState([]);
   const router = useRouter();
 
+  console.log("productProperties", productProperties);
 
-
-
-
-
-
-
-
-  console.log("productProperties", productProperties)
-
-
-
-  console.log("productProperties", productProperties)
-
-
-
-
-
-
-
+  console.log("productProperties", productProperties);
 
   useEffect(() => {
     axios.get("/api/categories").then((result) => {
@@ -80,7 +65,6 @@ export default function ProductForm({
       setSubCategories(result.data);
     });
   }, []);
-
 
   async function saveProduct(ev) {
     ev.preventDefault();
@@ -98,6 +82,7 @@ export default function ProductForm({
       subcategory,
       property: productProperty,
       sku,
+      id,
     };
     console.log(data);
     if (_id) {
@@ -171,8 +156,6 @@ export default function ProductForm({
     }
   }
 
-  
-
   const propertyToFill = [];
   if (subcategories.length > 0 && subcategory) {
     let subcatInfo = subcategories.find(({ _id }) => _id === subcategory);
@@ -199,6 +182,14 @@ export default function ProductForm({
       <label>SKU</label>
       <input
         type="text"
+        placeholder="id"
+        value={id}
+        onChange={(ev) => setId(ev.target.value)}
+      />
+
+      <label>Group SKU</label>
+      <input
+        type="text"
         placeholder="SKU"
         value={sku}
         onChange={(ev) => setSku(ev.target.value)}
@@ -216,7 +207,6 @@ export default function ProductForm({
         <option value="NewArrival">New Arrival</option>
         <option value="BestSeller">Best Seller</option>
         <option value="MonthlyBestSell">Monthly Best Sell</option>
-        
       </select>
 
       <label>Category</label>
@@ -230,14 +220,17 @@ export default function ProductForm({
           ))}
       </select>
 
-      <select value={productProperties} onChange={(ev) => setProductProperties(ev.target.value)}>
+      <select
+        value={productProperties}
+        onChange={(ev) => setProductProperties(ev.target.value)}
+      >
         {propertiesToFill.length > 0 &&
           propertiesToFill.map((p) => (
-            <option key={p.name} value={p.name}>{p.name}</option>
+            <option key={p.name} value={p.name}>
+              {p.name}
+            </option>
           ))}
-
       </select>
-
 
       {/* {propertiesToFill.length > 0 &&
         propertiesToFill.map((p) => (
@@ -259,7 +252,10 @@ export default function ProductForm({
         ))} */}
 
       <label>Subcategory</label>
-      <select value={subcategory} onChange={(ev) => setSubcategory(ev.target.value)}>
+      <select
+        value={subcategory}
+        onChange={(ev) => setSubcategory(ev.target.value)}
+      >
         <option value="">Uncategorized</option>
         {subcategories.length > 0 &&
           subcategories.map((sc) => (
@@ -287,13 +283,6 @@ export default function ProductForm({
             </div>
           </div>
         ))}
-
-
-
-
-
-
-
 
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-1">
@@ -363,12 +352,14 @@ export default function ProductForm({
         </div>
       ))}
       <div>
-        <button type="button" onClick={addPoint} className="btn-secondary mb-4 btn-primary ">
+        <button
+          type="button"
+          onClick={addPoint}
+          className="btn-secondary mb-4 btn-primary "
+        >
           Add Point
         </button>
-
       </div>
-
 
       <label>Price (in USD)</label>
       <input

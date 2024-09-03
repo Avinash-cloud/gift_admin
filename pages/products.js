@@ -129,11 +129,17 @@ export default function Products() {
         <table id="products-table" className="border-collapse w-full mt-11">
           <thead className="bg-gray-50">
             <tr className="divide-x divide-gray-200">
+            <th
+                scope="col"
+                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              >
+                <span> SKU ID</span>
+              </th>
               <th
                 scope="col"
                 className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
               >
-                <span>SKU ID</span>
+                <span>Group SKU ID</span>
               </th>
               <th
                 scope="col"
@@ -182,6 +188,9 @@ export default function Products() {
           <tbody className="divide-y divide-gray-200 bg-white">
             {currentPageData.map((product) => (
               <tr key={product._id} className="divide-x divide-gray-200">
+                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                  {product.id}
+                </td>
                 <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
                   {product.sku}
                 </td>

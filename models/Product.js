@@ -41,6 +41,11 @@ const ProductSchema = new Schema({
     trim: true,
     
   },
+  id: {
+    type: String,
+    trim: true,
+    
+  },
   shortDescriptionPoints:{
     type: [String], // Array of image URLs
     
