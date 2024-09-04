@@ -95,7 +95,7 @@ function Offer() {
           };
 
           const handleSubmit2 = async () => {
-            if (selectedProduct) {
+            if (selectedProduct1) {
               try {
                 const response = await fetch('/api/feature', {
                   method: 'PUT',
