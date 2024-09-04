@@ -153,12 +153,12 @@ export default function Products() {
               >
                 Title
               </th>
-              <th
+              {/* <th
                 scope="col"
                 className="border border-gray-300 py-3.5 text-left text-sm font-medium text-gray-500"
               >
                 Description
-              </th>
+              </th> */}
               <th
                 scope="col"
                 className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
@@ -193,7 +193,7 @@ export default function Products() {
                   {product.id}
                   </div>
                 </td>
-                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                <td className=" px-1 py-1 text-sm text-gray-900">
                   {product.sku}
                 </td>
                 <td className="whitespace-nowrap px-4 py-4">
@@ -220,11 +220,11 @@ export default function Products() {
                     </div>
                   </a>
                 </td>
-                <td className="px-4 py-4">
+                {/* <td className="px-4 py-4">
                   <div className="text-sm text-gray-500 overflow-auto max-h-20">
                     {product.description}
                   </div>
-                </td>
+                </td> */}
                 <td className="px-4 py-4">
                   <div className="text-sm text-gray-500">
                     {product.stockQuantity}
