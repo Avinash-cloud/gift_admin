@@ -62,7 +62,11 @@ function Offer() {
           setSelectedProduct(e.target.value);
         };
       
-     
+        const [selectedProduct1, setSelectedProduct1] = useState('');
+      
+        const handleSelectChange1 = (e) => {
+          setSelectedProduct1(e.target.value);
+        };
 
 
         const handleSubmit1 = async () => {
@@ -98,7 +102,7 @@ function Offer() {
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ productId: selectedProduct,_id:"665f07db68d756a48f0ae611" }),
+                  body: JSON.stringify({ productId: selectedProduct1,_id:"665f07db68d756a48f0ae611" }),
                 });
         
                 if (!response.ok) {
@@ -146,7 +150,7 @@ function Offer() {
                                 </div>
                                 <div>
                                     Offer two product
-                                    <select onChange={handleSelectChange}>
+                                    <select onChange={handleSelectChange1}>
                                         <option value="">No offer</option>
                                         {products.map((item, index) => (
                                             <option key={index} value={item._id}>{item.title}</option>
