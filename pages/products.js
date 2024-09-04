@@ -188,8 +188,10 @@ export default function Products() {
           <tbody className="divide-y divide-gray-200 bg-white">
             {currentPageData.map((product) => (
               <tr key={product._id} className="divide-x divide-gray-200">
-                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900 overflow-auto max-h-2 w-52">
+                  <div className="overflow-auto max-h-24" >
                   {product.id}
+                  </div>
                 </td>
                 <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
                   {product.sku}
@@ -206,17 +208,20 @@ export default function Products() {
                     
                   </div>
                 </td>
-                <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2">
+                <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2 w-52">
                   <a
                     target="_blank"
                     href={`https://www.internationalgift.in/product/${product._id}`}
                     rel="noopener noreferrer"
+                    
                   >
+                    <div className="overflow-auto max-h-24">
                     {product.title}
+                    </div>
                   </a>
                 </td>
                 <td className="px-4 py-4">
-                  <div className="text-sm text-gray-500 overflow-auto max-h-24">
+                  <div className="text-sm text-gray-500 overflow-auto max-h-20">
                     {product.description}
                   </div>
                 </td>
