@@ -30,7 +30,8 @@ export default async function handle(req, res) {
       type,
       shortDescriptionPoints
       ,subcategory,property
-      ,id
+      ,id,
+      custom
     } = req.body;
     console.log("at creation" ,req.body)
   
@@ -48,15 +49,16 @@ export default async function handle(req, res) {
       type
       ,subcategory,property
       ,id
+      ,custom
     });
   
     res.json(productDoc);
   }
   
   if (method === 'PUT') {
-    const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id,subcategory,property,type,id} = req.body;
+    const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id,subcategory,property,type,id,custom} = req.body;
     console.log("put data is", req.body)
-    await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints,subcategory,property,type,id});
+    await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints,subcategory,property,type,id,custom});
     res.json(true);
   }
 

@@ -41,6 +41,11 @@ const ProductSchema = new Schema({
     trim: true,
     
   },
+  custom: {
+    type: Boolean,
+    default: false,
+    
+  },
   id: {
     type: String,
     trim: true,

@@ -11,6 +11,8 @@ const OrderSchema = new Schema({
   country:String,
   paid:Boolean,
   status:String,
+  storedMessage:String,
+  storedImageUrl:String,
 }, {
   timestamps: true,
 });

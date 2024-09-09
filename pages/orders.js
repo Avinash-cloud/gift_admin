@@ -141,16 +141,13 @@ export default function OrdersPage() {
     document.body.removeChild(element);
   };
 
-  const cancleOrder=async (id)=>{
-    await axios.post(`/api/cancleorder/`,{id});
-    
-  }
+  const cancleOrder = async (id) => {
+    await axios.post(`/api/cancleorder/`, { id });
+  };
 
-  const deleveredOrder=async (id)=>{
-    await axios.post(`/api/deleveredorder/`,{id});
-    
-  }
-
+  const deleveredOrder = async (id) => {
+    await axios.post(`/api/deleveredorder/`, { id });
+  };
 
   const handleResetDates = () => {
     setFromDate("");
@@ -231,6 +228,9 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
               <th className="border border-gray-300 px-4 py-2">
+                Customization
+              </th>
+              <th className="border border-gray-300 px-4 py-2">
                 Address Information
               </th>
               <th className="border border-gray-300 px-4 py-2">
@@ -267,48 +267,133 @@ export default function OrdersPage() {
                     <div>Email: {order.email}</div>
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4">
-                    {order.address}, {order.city},{" "}
-                    {order.postalCode}
+                    {order.address}, {order.city}, {order.postalCode}
                     <br />
                     {order.country}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4 text-sm">
                     Order id : {order.order_id}
-                    <br/>
-                    Order Number :<a className="text-blue-400" href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}> {order.channel_order_id}</a>
+                    <br />
+                    Order Number :
+                    <a
+                      className="text-blue-400"
+                      href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}
+                    >
+                      {" "}
+                      {order.channel_order_id}
+                    </a>
                     <br />
                     Shipment Id : {order.shipment_id}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     <div className="w-60">
-                    {order.cart.map((item, index) => (
-                      <div className="overflow-auto w-full" key={index}>
-                        <div>Products : {item.title}</div>{" "}
-                        <div> Quantity : {item.quantity}</div>
-                        <br />
-                      </div>
-                    ))}
+                      {order.cart.map((item, index) => (
+                        <div className="overflow-auto w-full" key={index}>
+                          <div>Products : {item.title}</div>{" "}
+                          <div> Quantity : {item.quantity}</div>
+                          <br />
+                        </div>
+                      ))}
                     </div>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 flex">
-                    <button
-                      onClick={() => generatePDF(order)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
-                    >
-                      Invoice
-                    </button>
-                    <button
-                      onClick={() => deleveredOrder(order._id)}
-                      className="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
-                    >
-                      Delivered
-                    </button>
-                    <button
-                      onClick={() => cancleOrder(order._id)}
-                      className="ml-2 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
-                    >
-                      Cancle
-                    </button>
+                  <td className="border border-gray-300 px-4 py-2 w-2/4">
+                    {order.storedMessage ? (
+                      <div className="overflow-auto w-60 h-32 flex flex-col  items-center ">
+                        <span>
+                          <span className="font-semibold">Message :</span> "
+                          {order.storedMessage}"
+                        </span>
+                        <img
+                          src={order.storedImageUrl}
+                          height={100}
+                          width={100}
+                        />
+                        <a
+                          href={order.storedImageUrl} // URL of the image to download
+                          download={"png"} // Specify the default download filename
+                        >
+                          <button className="bg-blue-500 text-white mt-1 p-1 rounded">
+                            Download
+                          </button>
+                        </a>
+                      </div>
+                    ) : null}
+                  </td>
+
+                  <td className="border border-gray-300 px-4 py-2 text-center align-middle">
+                    <div className="flex flex-col justify-center items-center space-y-2">
+                      {/* If the order is "new", show all buttons */}
+                      {order.status === "NEW" && (
+                        <>
+                          <button
+                            onClick={() => generatePDF(order)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+                          >
+                            Invoice
+                          </button>
+                          <button
+                            onClick={() => deleveredOrder(order._id)}
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+                          >
+                            Delivered
+                          </button>
+                          <button
+                            onClick={() => cancleOrder(order._id)}
+                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+
+                      {/* If the order is "canceled", show disabled buttons */}
+                      {order.status === "canceled" && (
+                        <>
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
+                          >
+                            Invoice
+                          </button>
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
+                          >
+                            Delivered
+                          </button>
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+
+                      {/* If the order is "Delivered", show only the Invoice button */}
+                      {order.status === "Delivered" && (
+                        <>
+                          <button
+                            onClick={() => generatePDF(order)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+                          >
+                            Invoice
+                          </button>
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
+                          >
+                            Delivered
+                          </button>
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

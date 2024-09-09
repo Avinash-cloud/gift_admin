@@ -20,6 +20,7 @@ export default function ProductForm({
   shortDescriptionPoints: existingShortDescriptionPoints,
   type: existingtype,
   id: existingid,
+  custom: existingcustom,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [stockQuantity, setStockQuantity] = useState(existingStock || "");
@@ -44,6 +45,7 @@ export default function ProductForm({
   const [images, setImages] = useState(existingImages || []);
   const [sku, setSku] = useState(existingSku || "");
   const [id, setId] = useState(existingid || "");
+  const [custom, setCustom] = useState(existingcustom || "");
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -83,6 +85,7 @@ export default function ProductForm({
       property: productProperty,
       sku,
       id,
+      custom,
     };
     console.log(data);
     if (_id) {
@@ -193,6 +196,12 @@ export default function ProductForm({
         placeholder="SKU"
         value={sku}
         onChange={(ev) => setSku(ev.target.value)}
+      />
+      <label>Customization available</label>
+      <input
+        type="checkbox"
+        checked={custom} // `true` or `false` value
+        onChange={(ev) => setCustom(ev.target.checked)} // `.checked` gives boolean value
       />
 
       <label>Stock Quantity</label>
