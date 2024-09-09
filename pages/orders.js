@@ -143,10 +143,12 @@ export default function OrdersPage() {
 
   const cancleOrder = async (id) => {
     await axios.post(`/api/cancleorder/`, { id });
+    window.location.reload()
   };
 
   const deleveredOrder = async (id) => {
     await axios.post(`/api/deleveredorder/`, { id });
+    window.location.reload()
   };
 
   const handleResetDates = () => {
