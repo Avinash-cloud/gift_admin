@@ -300,8 +300,8 @@ export default function OrdersPage() {
                     {order.storedMessage ? (
                       <div className="overflow-auto w-60 h-32 flex flex-col  items-center ">
                         <span>
-                          <span className="font-semibold">Message :</span> "
-                          {order.storedMessage}"
+                          <span className="font-semibold">Message :</span> &quot;
+                          {order.storedMessage}&quot;
                         </span>
                         <img
                           src={order.storedImageUrl}
