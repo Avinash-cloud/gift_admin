@@ -229,9 +229,7 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Paid</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Customization
-              </th>
+              
               <th className="border border-gray-300 px-4 py-2">
                 Address Information
               </th>
@@ -240,6 +238,9 @@ export default function OrdersPage() {
               </th>
               <th className="border border-gray-300 px-4 py-2 w-11/12">
                 Products & Quantity{" "}
+              </th>
+              <th className="border border-gray-300 px-4 py-2">
+                Customization
               </th>
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
