@@ -267,6 +267,7 @@ export default function OrdersPage() {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     <div>Name : {order.buyer_name}</div> <br />
+                    <div>Contact No : {order.phone}</div> <br />
                     <div>Email: {order.email}</div>
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4">
