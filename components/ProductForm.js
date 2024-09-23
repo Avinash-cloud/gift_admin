@@ -45,7 +45,7 @@ export default function ProductForm({
   const [images, setImages] = useState(existingImages || []);
   const [sku, setSku] = useState(existingSku || "");
   const [id, setId] = useState(existingid || "");
-  const [custom, setCustom] = useState(existingcustom || "");
+  const [custom, setCustom] = useState(existingcustom ||false);
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);

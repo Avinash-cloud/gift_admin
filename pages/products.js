@@ -49,6 +49,37 @@ export default function Products() {
     { label: "Discounted Price", key: "discountedPrice" },
   ];
 
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!file) {
+      alert("Please select a file!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("csv", file);
+
+    try {
+      const response = await axios.post("/api/csvupload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("File uploaded successfully");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error uploading file", error);
+      alert("Failed to upload file");
+    }
+  };
+
   return (
     <Layout>
       <div className="mb-14 overflow-x-auto h-10">
@@ -61,10 +92,21 @@ export default function Products() {
       </div>
 
       <div className="justify-center items-center gap-4 max-sm:justify-start flex overflow-x-auto h-auto w-full">
-        <div className="flex">
-          <button className="rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">
-            Upload via CSV
-          </button>
+        <div className="flex-row">
+          <form onSubmit={handleSubmit} className="flex flex-row gap-2 justify-center items-center ">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              className="mb-4"
+            />
+            <button
+              type="submit"
+              className=" w-44  rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+            >
+              Upload via CSV
+            </button>
+          </form>
         </div>
 
         <div>
@@ -121,6 +163,9 @@ export default function Products() {
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={250}>250</option>
+            <option value={500}>500</option>
           </select>
         </div>
       </div>
@@ -129,7 +174,7 @@ export default function Products() {
         <table id="products-table" className="border-collapse w-full mt-11">
           <thead className="bg-gray-50">
             <tr className="divide-x divide-gray-200">
-            <th
+              <th
                 scope="col"
                 className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
               >
@@ -189,9 +234,7 @@ export default function Products() {
             {currentPageData.map((product) => (
               <tr key={product._id} className="divide-x divide-gray-200">
                 <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900 overflow-auto max-h-2 w-52">
-                  <div className="overflow-auto max-h-24" >
-                  {product.id}
-                  </div>
+                  <div className="overflow-auto max-h-24">{product.id}</div>
                 </td>
                 <td className=" px-1 py-1 text-sm text-gray-900">
                   {product.sku}
@@ -205,7 +248,6 @@ export default function Products() {
                         alt={product.title}
                       />
                     </div>
-                    
                   </div>
                 </td>
                 <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2 w-52">
@@ -213,10 +255,9 @@ export default function Products() {
                     target="_blank"
                     href={`https://www.internationalgift.in/product/${product._id}`}
                     rel="noopener noreferrer"
-                    
                   >
                     <div className="overflow-auto max-h-24">
-                    {product.title}
+                      {product.title}
                     </div>
                   </a>
                 </td>
@@ -248,7 +289,7 @@ export default function Products() {
                     href={`/products/delete/${product._id}`}
                   >
                     Delete
-                    </Link>
+                  </Link>
                 </td>
               </tr>
             ))}
