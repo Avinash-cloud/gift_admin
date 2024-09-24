@@ -80,6 +80,40 @@ export default function Products() {
     }
   };
 
+  const [selectedProducts, setSelectedProducts] = useState([]);
+
+  // Handle checkbox toggle
+  const handleCheckboxChange = (productId) => {
+    setSelectedProducts((prevSelected) =>
+      prevSelected.includes(productId)
+        ? prevSelected.filter((id) => id !== productId) // Deselect if already selected
+        : [...prevSelected, productId] // Select if not already selected
+    );
+  };
+
+  // Handle delete button click
+  const deleteSelectedProducts = async () => {
+    try {
+      if (selectedProducts.length === 0) {
+        alert('Please select products to delete.');
+        return;
+      }
+  
+      // Confirm deletion with the user
+      if (confirm(`Are you sure you want to delete ${selectedProducts.length} products?`)) {
+        // Send DELETE request to the backend with the selected product IDs
+        await axios.delete(`/api/products?ids=${selectedProducts.join(',')}`);
+  
+        // Perform necessary actions after deletion (e.g., refreshing the product list)
+        alert('Selected products deleted successfully.');
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error deleting products:', error);
+    }
+  };
+  
+
   return (
     <Layout>
       <div className="mb-14 overflow-x-auto h-10">
@@ -169,133 +203,145 @@ export default function Products() {
           </select>
         </div>
       </div>
+      <div className="mt-4">
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          onClick={deleteSelectedProducts}
+          disabled={selectedProducts.length === 0}
+        >
+          Delete Selected
+        </button>
+      </div>
 
       <div className="overflow-x-auto">
-        <table id="products-table" className="border-collapse w-full mt-11">
-          <thead className="bg-gray-50">
-            <tr className="divide-x divide-gray-200">
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                <span> SKU ID</span>
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                <span>Group SKU ID</span>
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                <span>Image</span>
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Title
-              </th>
-              {/* <th
-                scope="col"
-                className="border border-gray-300 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Description
-              </th> */}
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Stock
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Price
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Discounted Price
-              </th>
-              <th
-                scope="col"
-                className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
-              >
-                Actions
-              </th>
+      <table id="products-table" className="border-collapse w-full mt-11">
+        <thead className="bg-gray-50">
+          <tr className="divide-x divide-gray-200">
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              <span>Select</span>
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              <span>SKU ID</span>
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              <span>Group SKU ID</span>
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              <span>Image</span>
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Title
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Stock
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Price
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Discounted Price
+            </th>
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {currentPageData.map((product) => (
+            <tr key={product._id} className="divide-x divide-gray-200">
+              <td className="whitespace-nowrap px-4 py-4">
+                <input
+                  type="checkbox"
+                  checked={selectedProducts.includes(product._id)}
+                  onChange={() => handleCheckboxChange(product._id)}
+                />
+              </td>
+              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900 overflow-auto max-h-2 w-52">
+                <div className="overflow-auto max-h-24">{product.id}</div>
+              </td>
+              <td className="px-1 py-1 text-sm text-gray-900">
+                {product.sku}
+              </td>
+              <td className="whitespace-nowrap px-4 py-4">
+                <div className="flex items-center">
+                  <div className="h-16 w-16 flex-shrink-0">
+                    <img
+                      className="h-16 w-16 rounded-full object-cover"
+                      src={product.images[0]}
+                      alt={product.title}
+                    />
+                  </div>
+                </div>
+              </td>
+              <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2 w-52">
+                <a
+                  target="_blank"
+                  href={`https://www.internationalgift.in/product/${product._id}`}
+                  rel="noopener noreferrer"
+                >
+                  <div className="overflow-auto max-h-24">{product.title}</div>
+                </a>
+              </td>
+              <td className="px-4 py-4">
+                <div className="text-sm text-gray-500">
+                  {product.stockQuantity}
+                </div>
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                {product.price}
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                {product.discountedPrice}
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 text-sm font-medium space-x-2">
+                <Link
+                  className="text-blue-500 hover:text-blue-600"
+                  href={`/products/edit/${product._id}`}
+                >
+                  Edit
+                </Link>
+                <Link
+                  className="text-red-500 hover:text-red-600"
+                  href={`/products/delete/${product._id}`}
+                >
+                  Delete
+                </Link>
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {currentPageData.map((product) => (
-              <tr key={product._id} className="divide-x divide-gray-200">
-                <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900 overflow-auto max-h-2 w-52">
-                  <div className="overflow-auto max-h-24">{product.id}</div>
-                </td>
-                <td className=" px-1 py-1 text-sm text-gray-900">
-                  {product.sku}
-                </td>
-                <td className="whitespace-nowrap px-4 py-4">
-                  <div className="flex items-center">
-                    <div className="h-16 w-16 flex-shrink-0">
-                      <img
-                        className="h-16 w-16 rounded-full object-cover"
-                        src={product.images[0]}
-                        alt={product.title}
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td className="px-1 py-1 text-sm text-gray-900 overflow-auto max-h-2 w-52">
-                  <a
-                    target="_blank"
-                    href={`https://www.internationalgift.in/product/${product._id}`}
-                    rel="noopener noreferrer"
-                  >
-                    <div className="overflow-auto max-h-24">
-                      {product.title}
-                    </div>
-                  </a>
-                </td>
-                {/* <td className="px-4 py-4">
-                  <div className="text-sm text-gray-500 overflow-auto max-h-20">
-                    {product.description}
-                  </div>
-                </td> */}
-                <td className="px-4 py-4">
-                  <div className="text-sm text-gray-500">
-                    {product.stockQuantity}
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
-                  {product.price}
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
-                  {product.discountedPrice}
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 text-sm font-medium space-x-2">
-                  <Link
-                    className="text-blue-500 hover:text-blue-600"
-                    href={`/products/edit/${product._id}`}
-                  >
-                    Edit
-                  </Link>
-                  <Link
-                    className="text-red-500 hover:text-red-600"
-                    href={`/products/delete/${product._id}`}
-                  >
-                    Delete
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Delete button */}
+      
+    </div>
 
       <div className="flex justify-center mt-4">
         <ReactPaginate

@@ -10,10 +10,10 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    axios.get('/api/users').then(response => {
+    axios.get("/api/users").then((response) => {
       setProducts(response.data);
     });
   }, []);
@@ -31,7 +31,7 @@ export default function Products() {
     setCurrentPage(0);
   };
 
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = products.filter((product) =>
     product.firstName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -46,43 +46,37 @@ export default function Products() {
     { label: "Description", key: "description" },
     { label: "Stock", key: "stockQuantity" },
     { label: "Price", key: "price" },
-    { label: "Discounted Price", key: "discountedPrice" }
+    { label: "Discounted Price", key: "discountedPrice" },
+    
   ];
 
   return (
     <Layout>
-
-
-      <div className="mb-14">
-        <Link 
-        className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-        href={'/products/new'}>Add new product</Link>
-      </div>
-
+      
 
       <div className="justify-center space-x-14 flex m-4 h-10">
-        
-        <div>
-          <button className="rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700">Upload via CSV</button>
-        </div>
+       
 
         <div>
-          <label htmlFor="" className="mx-4 font-semibold">Search</label>
-        <input
-          type="search"
-          placeholder="Search by title"
-          value={searchTerm}
-          onChange={handleSearch}
-          className="border px-2 py-1 rounded w-48"
-        />
+          <label htmlFor="" className="mx-4 font-semibold">
+            Search
+          </label>
+          <input
+            type="search"
+            placeholder="Search by title"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="border px-2 py-1 rounded w-48"
+          />
         </div>
 
         <div className="flex space-x-2">
-          <CSVLink 
-            data={products} 
-            headers={headers} 
-            filename={"products.csv"} 
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+          <CSVLink
+            data={products}
+            headers={headers}
+            filename={"products.csv"}
+            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          >
             Export to CSV
           </CSVLink>
 
@@ -90,7 +84,7 @@ export default function Products() {
             id="test-table-xls-button"
             className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             table="products-table"
-            filename="products"
+            filename="users"
             sheet="tablexls"
             buttonText="Export to Excel"
           />
@@ -105,9 +99,8 @@ export default function Products() {
           </a>
         </div>
 
-
         <div className="mb-4 flex">
-          <label  className="mr-2">Show</label>
+          <label className="mr-2">Show</label>
           <select
             id="itemsPerPage"
             value={itemsPerPage}
@@ -117,58 +110,97 @@ export default function Products() {
             <option value={10}>10</option>
             <option value={20}>20</option>
             <option value={50}>50</option>
+            <option value={100}>100</option>
+            <option value={250}>250</option>
           </select>
-          
         </div>
       </div>
 
-      <table id="products-table" className="border-collapse w-full">
+      <table id="products-table" className="border-black  w-full">
         <thead className="bg-gray-50">
           <tr className="divide-x divide-gray-200">
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
               <span>ID</span>
             </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
               <span>First Name</span>
             </th>
-            <th scope="col" className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500">
-            Last Name
+            <th
+              scope="col"
+              className="border border-gray-300 px-12 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Last Name
             </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-            Email
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Email
             </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-            Phone Number
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Phone Number
             </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-            Country
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Country
             </th>
-            <th scope="col" className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500">
-            Region
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Address
             </th>
-            
+            <th
+              scope="col"
+              className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+            >
+              Region
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
           {currentPageData.map((product) => (
             <tr key={product._id} className="divide-x divide-gray-200">
-              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">{product._id}</td>
-              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">              
-                    
-                      {product.firstName}                    
-                    
-                  
+              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                {product._id}
               </td>
-              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">{product.lastName}</td>
+              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                {product.firstName}
+              </td>
+              <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
+                {product.lastName}
+              </td>
               <td className="px-4 py-4">
                 <div className="text-sm text-gray-500">{product.email}</div>
               </td>
               <td className="px-4 py-4">
-                <div className="text-sm text-gray-500">{product.phoneNumber}</div>
+                <div className="text-sm text-gray-500">
+                  {product.phoneNumber}
+                </div>
               </td>
-              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">{product.country}</td>
-              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">{product.region}</td>
-              
+              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                {product.country}
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                <div><span className="font-semibold">Address :</span>{product.address
+                }</div>
+                <div><span className="font-semibold">Postal Code : </span>{product.postalCode
+                }</div>
+              </td>
+              <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                {product.region}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -10,7 +10,7 @@ export default async function handle(req, res) {
   if (method === 'GET') {
     if (req.query?.ids) {
       const idsArray = req.query.ids.split(',');
-      res.json(await Product.find({ _id: { $in: idsArray } }));
+      res.json(await Product.find({ id: { $in: idsArray } }));
     } else if (req.query?.id) {
       res.json(await Product.findOne({ _id: req.query.id }));
     } else {
@@ -63,9 +63,20 @@ export default async function handle(req, res) {
   }
 
   if (method === 'DELETE') {
-    if (req.query?.id) {
-      await Product.deleteOne({_id:req.query?.id});
-      res.json(true);
+    const { id, ids } = req.query; // Get both `id` and `ids` from query parameters
+  
+    if (id) {
+      // Single delete if `id` is provided
+      await Product.deleteOne({ _id: id });
+      res.json({ success: true, message: 'Product deleted successfully.' });
+    } else if (ids) {
+      // Multiple delete if `ids` (comma-separated list) is provided
+      const productIds = ids.split(',');
+      await Product.deleteMany({ _id: { $in: productIds } });
+      res.json({ success: true, message: `${productIds.length} products deleted.` });
+    } else {
+      // If neither `id` nor `ids` are provided, return an error
+      res.status(400).json({ success: false, message: 'No id or ids provided.' });
     }
   }
 }

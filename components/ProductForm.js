@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import Spinner from "@/components/Spinner";
 import { ReactSortable } from "react-sortablejs";
+import ReactQuill from 'react-quill';
 
 export default function ProductForm({
   _id,
@@ -335,11 +336,36 @@ export default function ProductForm({
         </label>
       </div>
       <label>Description</label>
-      <textarea
+      {/* <textarea
         placeholder="description"
         value={description}
         onChange={(ev) => setDescription(ev.target.value)}
+      /> */}
+
+<div>
+      <label>Description</label>
+      <ReactQuill
+        value={description}
+        onChange={setDescription}
+        placeholder="Enter description..."
+        modules={{
+          toolbar: [
+            [{ header: '1' }, { header: '2' }, { font: [] }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+            [{ align: [] }],
+            [{ 'color': [] }, { 'background': [] }],
+            ['link', 'image', 'blockquote', 'code-block'],
+            ['clean'] // remove formatting button
+          ]
+        }}
+        formats={[
+          'header', 'font', 'list', 'bullet',
+          'bold', 'italic', 'underline', 'strike',
+          'align', 'color', 'background', 'link', 'image', 'blockquote', 'code-block'
+        ]}
       />
+    </div>
 
       <label>Short Description Points</label>
       {shortDescriptionPoints.map((point, index) => (

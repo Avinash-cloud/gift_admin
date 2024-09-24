@@ -107,8 +107,8 @@ export default function OrdersPage() {
       <div>
         <h1>Invoice</h1>
         <div><strong>Date:</strong> ${new Date(
-          order.createdAt
-        ).toLocaleString()}</div>
+      order.createdAt
+    ).toLocaleString()}</div>
         <div><strong>Name:</strong> ${order.buyer_name}</div>
         <div><strong>Email:</strong> ${order.email}</div>
         <div><strong>Street Address:</strong> ${order.address}</div>
@@ -117,15 +117,15 @@ export default function OrdersPage() {
         <div><strong>Country:</strong> ${order.country}</div>
         <h2>Products</h2>
         ${order.cart
-          .map(
-            (item) => `
+        .map(
+          (item) => `
           <div>
             <strong>Product:</strong> ${item.title} <br />
             <strong>Quantity:</strong> ${item.quantity}
           </div>
         `
-          )
-          .join("")}
+        )
+        .join("")}
       </div>
     `;
 
@@ -217,6 +217,8 @@ export default function OrdersPage() {
           <option value={20}>20 rows</option>
           <option value={50}>50 rows</option>
           <option value={100}>100 rows</option>
+          <option value={250}>250</option>
+
         </select>
       </div>
 
@@ -229,7 +231,7 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Paid</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
-              
+
               <th className="border border-gray-300 px-4 py-2">
                 Address Information
               </th>
@@ -293,7 +295,7 @@ export default function OrdersPage() {
                     <div className="w-60">
                       {order.cart.map((item, index) => (
                         <div className="overflow-auto w-full" key={index}>
-                          <div>Products : {item.title}</div>{" "}
+                          <div>Products : <a href={`https://www.internationalgift.in/product/${item._id}`} className="text-blue-400">{item.title}</a></div>{" "}
                           <div> Quantity : {item.quantity}</div>
                           <br />
                         </div>
@@ -337,9 +339,9 @@ export default function OrdersPage() {
                           </button>
                           <button
                             onClick={() => deleveredOrder(order._id)}
-                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded w-24"
                           >
-                            Delivered
+                            Ship Now
                           </button>
                           <button
                             onClick={() => cancleOrder(order._id)}
@@ -353,18 +355,7 @@ export default function OrdersPage() {
                       {/* If the order is "canceled", show disabled buttons */}
                       {order.status === "canceled" && (
                         <>
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
-                          >
-                            Invoice
-                          </button>
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
-                          >
-                            Delivered
-                          </button>
+
                           <button
                             disabled
                             className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
@@ -387,7 +378,7 @@ export default function OrdersPage() {
                             disabled
                             className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
                           >
-                            Delivered
+                            Ship Now
                           </button>
                           <button
                             disabled
