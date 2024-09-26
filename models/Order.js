@@ -13,7 +13,11 @@ const OrderSchema = new Schema({
   paid:Boolean,
   status:String,
   storedMessage:String,
-  storedImageUrl:String,
+  cart:Object,
+  buyer_name:String,
+  storedImageUrl:[String],
+  storedusername:String,
+  storednumber:String,
 }, {
   timestamps: true,
 });

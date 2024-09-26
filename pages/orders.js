@@ -107,8 +107,8 @@ export default function OrdersPage() {
       <div>
         <h1>Invoice</h1>
         <div><strong>Date:</strong> ${new Date(
-      order.createdAt
-    ).toLocaleString()}</div>
+          order.createdAt
+        ).toLocaleString()}</div>
         <div><strong>Name:</strong> ${order.buyer_name}</div>
         <div><strong>Email:</strong> ${order.email}</div>
         <div><strong>Street Address:</strong> ${order.address}</div>
@@ -117,15 +117,15 @@ export default function OrdersPage() {
         <div><strong>Country:</strong> ${order.country}</div>
         <h2>Products</h2>
         ${order.cart
-        .map(
-          (item) => `
+          .map(
+            (item) => `
           <div>
             <strong>Product:</strong> ${item.title} <br />
             <strong>Quantity:</strong> ${item.quantity}
           </div>
         `
-        )
-        .join("")}
+          )
+          .join("")}
       </div>
     `;
 
@@ -143,12 +143,12 @@ export default function OrdersPage() {
 
   const cancleOrder = async (id) => {
     await axios.post(`/api/cancleorder/`, { id });
-    window.location.reload()
+    window.location.reload();
   };
 
   const deleveredOrder = async (id) => {
     await axios.post(`/api/deleveredorder/`, { id });
-    window.location.reload()
+    window.location.reload();
   };
 
   const handleResetDates = () => {
@@ -218,7 +218,6 @@ export default function OrdersPage() {
           <option value={50}>50 rows</option>
           <option value={100}>100 rows</option>
           <option value={250}>250</option>
-
         </select>
       </div>
 
@@ -295,7 +294,15 @@ export default function OrdersPage() {
                     <div className="w-60">
                       {order.cart.map((item, index) => (
                         <div className="overflow-auto w-full" key={index}>
-                          <div>Products : <a href={`https://www.internationalgift.in/product/${item._id}`} className="text-blue-400">{item.title}</a></div>{" "}
+                          <div>
+                            Products :{" "}
+                            <a
+                              href={`https://www.internationalgift.in/product/${item._id}`}
+                              className="text-blue-400"
+                            >
+                              {item.title}
+                            </a>
+                          </div>{" "}
                           <div> Quantity : {item.quantity}</div>
                           <br />
                         </div>
@@ -304,24 +311,39 @@ export default function OrdersPage() {
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4">
                     {order.storedMessage ? (
-                      <div className="overflow-auto w-60 h-32 flex flex-col  items-center ">
+                      <div className="overflow-auto w-60 h-32 flex flex-col  ">
                         <span>
-                          <span className="font-semibold">Message :</span> &quot;
+                          <span className="font-semibold">Message :</span>{" "}
+                          &quot;
                           {order.storedMessage}&quot;
                         </span>
-                        <img
-                          src={order.storedImageUrl}
-                          height={100}
-                          width={100}
-                        />
-                        <a
-                          href={order.storedImageUrl} // URL of the image to download
-                          download={"png"} // Specify the default download filename
-                        >
-                          <button className="bg-blue-500 text-white mt-1 p-1 rounded">
-                            Download
-                          </button>
-                        </a>
+                        <p><span className="font-semibold">Name :</span>{order.storedusername} </p>
+                        <p><span className="font-semibold">Number :</span>{order.storednumber}</p>
+
+                        {order.storedImageUrl &&
+                          order.storedImageUrl.map((url, index) => (
+                            <div key={index} className="mb-4">
+                              {/* Display the image */}
+                              <img
+                                src={url}
+                                alt={`Image ${index + 1}`}
+                                height={100}
+                                width={100}
+                                className="rounded"
+                              />
+
+                              {/* Download button */}
+                              <a
+                                href={url}
+                                download={`image-${index + 1}`}
+                                className="ml-2"
+                              >
+                                <button className="bg-blue-500 text-white mt-1 p-1 rounded">
+                                  Download
+                                </button>
+                              </a>
+                            </div>
+                          ))}
                       </div>
                     ) : null}
                   </td>
@@ -355,7 +377,6 @@ export default function OrdersPage() {
                       {/* If the order is "canceled", show disabled buttons */}
                       {order.status === "canceled" && (
                         <>
-
                           <button
                             disabled
                             className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
