@@ -8,7 +8,8 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
+import { toWords } from 'number-to-words';
+import Invoice from "@/pages/invoice";
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
@@ -101,45 +102,7 @@ export default function OrdersPage() {
 
   const pageCount = Math.ceil(filteredOrders.length / ordersPerPage);
 
-  const generatePDF = async (order) => {
-    const doc = new jsPDF();
-    const content = `
-      <div>
-        <h1>Invoice</h1>
-        <div><strong>Date:</strong> ${new Date(
-          order.createdAt
-        ).toLocaleString()}</div>
-        <div><strong>Name:</strong> ${order.buyer_name}</div>
-        <div><strong>Email:</strong> ${order.email}</div>
-        <div><strong>Street Address:</strong> ${order.address}</div>
-        <div><strong>City:</strong> ${order.city}</div>
-        <div><strong>Postal Code:</strong> ${order.postalCode}</div>
-        <div><strong>Country:</strong> ${order.country}</div>
-        <h2>Products</h2>
-        ${order.cart
-          .map(
-            (item) => `
-          <div>
-            <strong>Product:</strong> ${item.title} <br />
-            <strong>Quantity:</strong> ${item.quantity}
-          </div>
-        `
-          )
-          .join("")}
-      </div>
-    `;
-
-    const element = document.createElement("div");
-    element.innerHTML = content;
-    document.body.appendChild(element);
-
-    const canvas = await html2canvas(element);
-    const imgData = canvas.toDataURL("image/png");
-
-    doc.addImage(imgData, "PNG", 10, 10);
-    doc.save(`Invoice_${order._id}.pdf`);
-    document.body.removeChild(element);
-  };
+ 
 
   const cancleOrder = async (id) => {
     await axios.post(`/api/cancleorder/`, { id });
@@ -354,10 +317,12 @@ export default function OrdersPage() {
                       {order.status === "NEW" && (
                         <>
                           <button
-                            onClick={() => generatePDF(order)}
+                            
                             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
                           >
+                            <a href={`invoice/${order._id}`}>
                             Invoice
+                            </a>
                           </button>
                           <button
                             onClick={() => deleveredOrder(order._id)}
@@ -390,10 +355,12 @@ export default function OrdersPage() {
                       {order.status === "Delivered" && (
                         <>
                           <button
-                            onClick={() => generatePDF(order)}
+                            
                             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
                           >
+                            <a href={`invoice/${order._id}`}>
                             Invoice
+                            </a>
                           </button>
                           <button
                             disabled
