@@ -47,8 +47,8 @@ export default function EditProductPage() {
   return (
     <>
       {orders.length > 0 &&
-        orders.map((order) => (
-          <div id="content2" className=" printable-content p-4">
+        orders.map((order,index) => (
+          <div key={index} id="content2" className=" printable-content p-4">
             <div className="grid grid-cols-2 pb-5">
               <div>
                 <img
