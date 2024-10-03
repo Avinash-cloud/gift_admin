@@ -11,10 +11,10 @@ const dbName = 'csvss_import';
 const collectionName = 'csvdatas';
 
 export const config = {
-    api: { bodyParser: false },
-  };
+  api: { bodyParser: false },
+};
 
-export default async function handle (req, res)  {
+export default async function handle(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
@@ -61,7 +61,12 @@ export default async function handle (req, res)  {
                 const propertyKey = key.split('.')[1];
                 properties[propertyKey] = data[key];
               } else if (data[key]) {
-                document[key] = data[key];
+                // Convert specific fields to numbers
+                if (['price', 'discountedPrice', 'stockQuantity'].includes(key)) {
+                  document[key] = Number(data[key]);
+                } else {
+                  document[key] = data[key];
+                }
               }
             }
 
@@ -99,6 +104,3 @@ export default async function handle (req, res)  {
     }
   });
 };
-
-// Export the API route
-

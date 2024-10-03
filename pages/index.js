@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import SalesChart from "../components/SalesChart";
 import NewUsers from "@/components/NewUsers";
-import LatestUsers from '@/components/LatestUsers';
+import LatestUsers from "@/components/LatestUsers";
 export default function Home() {
   const { data: session } = useSession();
 
@@ -20,7 +20,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-6 mt-64">
           <h1 className="text-3xl font-bold mb-6">Users</h1>
           <NewUsers />
         </div>
