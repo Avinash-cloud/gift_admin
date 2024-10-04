@@ -6,9 +6,9 @@ import csv from 'csv-parser';
 import { MongoClient } from 'mongodb';
 
 // MongoDB configuration
-const uri = 'mongodb://localhost:27017/'; // replace with your connection string
-const dbName = 'csvss_import';
-const collectionName = 'csvdatas';
+const uri = 'mongodb+srv://avipurohit27:avinash27@cluster0.4jj9vnf.mongodb.net/'; // replace with your connection string
+const dbName = 'gift';
+const collectionName = 'products';
 
 export const config = {
   api: { bodyParser: false },
