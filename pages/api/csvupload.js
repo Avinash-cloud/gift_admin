@@ -50,7 +50,7 @@ export default async function handle(req, res) {
             const document = {};
             const images = [];
             const shortDescriptionPoints = [];
-            const properties = {};
+            const property = {};
 
             for (const key of headers) {
               if (key.startsWith('images') && data[key]) {
@@ -59,7 +59,7 @@ export default async function handle(req, res) {
                 shortDescriptionPoints.push(data[key]);
               } else if (key.startsWith('property.') && data[key]) {
                 const propertyKey = key.split('.')[1];
-                properties[propertyKey] = data[key];
+                property[propertyKey] = data[key];
               } else if (data[key]) {
                 // Convert specific fields to numbers
                 if (['price', 'discountedPrice', 'stockQuantity'].includes(key)) {
@@ -76,8 +76,8 @@ export default async function handle(req, res) {
             if (shortDescriptionPoints.length > 0) {
               document.shortDescriptionPoints = shortDescriptionPoints;
             }
-            if (Object.keys(properties).length > 0) {
-              document.properties = properties;
+            if (Object.keys(property).length > 0) {
+              document.property = property;
             }
 
             results.push(document);
