@@ -273,7 +273,7 @@ export default function OrdersPage() {
                     </div>
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4">
-                    {order.storedMessage ? (
+                    {/* {order.storedusername ? ( */}
                       <div className="overflow-auto w-60 h-32 flex flex-col  ">
                         <span>
                           <span className="font-semibold">Message :</span>{" "}
@@ -308,7 +308,7 @@ export default function OrdersPage() {
                             </div>
                           ))}
                       </div>
-                    ) : null}
+                    {/* ) : null} */}
                   </td>
 
                   <td className="border border-gray-300 px-4 py-2 text-center align-middle">
