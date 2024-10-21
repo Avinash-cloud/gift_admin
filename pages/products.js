@@ -11,6 +11,8 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     axios.get("/api/products").then((response) => {
@@ -111,6 +113,16 @@ export default function Products() {
     } catch (error) {
       console.error('Error deleting products:', error);
     }
+  };
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedProducts([]);
+    } else {
+      const allProductIds = currentPageData.map((product) => product._id);
+      setSelectedProducts(allProductIds);
+    }
+    setSelectAll(!selectAll);
   };
   
 
@@ -220,6 +232,7 @@ export default function Products() {
             <th
               scope="col"
               className="border border-gray-300 px-4 py-3.5 text-left text-sm font-medium text-gray-500"
+              onClick={handleSelectAll}
             >
               <span>Select</span>
             </th>

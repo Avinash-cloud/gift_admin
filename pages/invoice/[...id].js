@@ -9,12 +9,12 @@ export default function EditProductPage() {
   const [orders, setOrders] = useState([]);
   const [total, setTotal] = useState();
   const router = useRouter();
-  const {id} = router.query;
+  const { id } = router.query;
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get("/api/orders?id="+id).then((response) => {
+    axios.get("/api/orders?id=" + id).then((response) => {
       setOrders(response.data);
     });
   }, [id]);
@@ -27,27 +27,27 @@ export default function EditProductPage() {
   const totalDiscountedPrice =
     orders.length > 0 && orders[0].cart
       ? orders[0].cart.reduce((total, item) => {
-          return total + item.discountedPrice;
-        }, 0)
+        return total + item.discountedPrice;
+      }, 0)
       : 0;
 
   const totalTaxPrice =
     orders.length > 0 && orders[0].cart
       ? orders[0].cart?.reduce((total, item) => {
-          return (
-            total +
-            Math.round(
-              (parseFloat(item.property.Tax) / 100) * item.discountedPrice
-            )
-          );
-        }, 0)
+        return (
+          total +
+          Math.round(
+            (parseFloat(item.property.Tax) / 100) * item.discountedPrice
+          )
+        );
+      }, 0)
       : 0;
 
   const totalDiscountedPriceInWords = toWords(totalDiscountedPrice);
   return (
     <>
       {orders.length > 0 &&
-        orders.map((order,index) => (
+        orders.map((order, index) => (
           <div key={index} id="content2" className=" printable-content p-4">
             <div className="grid grid-cols-2 pb-5">
               <div>
@@ -202,7 +202,7 @@ export default function EditProductPage() {
                           ₹{item.discountedPrice - item.price} {""}(
                           {Math.round(
                             ((item.price - item.discountedPrice) / item.price) *
-                              100
+                            100
                           )}
                           %)
                         </td>
@@ -210,7 +210,7 @@ export default function EditProductPage() {
                           {item.discountedPrice -
                             Math.round(
                               (parseFloat(item.property.Tax) / 100) *
-                                item.discountedPrice
+                              item.discountedPrice
                             )}
                         </td>
                         <td className="border-2 border-black px-4 py-2 font-bold">
@@ -219,7 +219,7 @@ export default function EditProductPage() {
                         <td className="border-2 border-black px-4 py-2 font-bold">
                           {Math.round(
                             (parseFloat(item.property.Tax) / 100) *
-                              item.discountedPrice
+                            item.discountedPrice
                           )}
                         </td>
                         <td className="border-2 border-black px-4 py-2 font-bold">
@@ -339,14 +339,16 @@ export default function EditProductPage() {
       <style jsx>{`
         @media print {
           @page {
-            size: landscape; /* Set the page size */
+            size: A4; /* Set the page size */
             margin: 1in; /* Adjust the margin as needed */
           }
 
           body {
-            margin: 0;
+            margin: 20px;
             padding: 40px;
             box-sizing: border-box;
+            transform: scale(0.77);
+            transform-origin: top left;
           }
 
           .printable-content {
@@ -354,10 +356,24 @@ export default function EditProductPage() {
             page-break-before: avoid;
             page-break-after: avoid;
             page-break-inside: avoid;
-            overflow: hidden;
+            overflow: auto;
             font-size: 0.8em; /* Adjust font size to fit content */
             transform: scale(0.9); /* Scale down content to fit the page */
           }
+
+          table {
+    width: 100%;
+    border-collapse: collapse; /* To avoid borders breaking */
+}
+
+tr {
+    page-break-inside: avoid; /* Prevent row from breaking between pages */
+}
+
+td, th {
+    border: 1px solid black; /* Example border */
+    padding: 8px;
+}
 
           .no-print {
             display: none;

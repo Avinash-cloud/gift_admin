@@ -6,6 +6,7 @@ export default function Document() {
       <head>
         <title>Admin</title>
         
+        
       </head>
       <Head />
       <body>

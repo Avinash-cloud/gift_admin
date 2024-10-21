@@ -194,9 +194,9 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Status</th>
               <th className="border border-gray-300 px-4 py-2">Recipient</th>
 
-              <th className="border border-gray-300 px-4 py-2">
+              {/* <th className="border border-gray-300 px-4 py-2">
                 Address Information
-              </th>
+              </th> */}
               <th className="border border-gray-300 px-4 py-2">
                 Other Information
               </th>
@@ -232,13 +232,19 @@ export default function OrdersPage() {
                   <td className="border border-gray-300 px-4 py-2">
                     <div>Name : {order.buyer_name}</div> <br />
                     <div>Contact No : {order.phone}</div> <br />
-                    <div>Email: {order.email}</div>
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 w-2/4">
+                    <div><span>Email: {order.email}</span></div>
+                   <p className="font-bold"> Address</p>
+                    <div>
                     {order.address}, {order.city}, {order.postalCode}
                     <br />
                     {order.country}
+                    </div>
                   </td>
+                  {/* <td className="border border-gray-300 px-4 py-2 w-2/4">
+                    {order.address}, {order.city}, {order.postalCode}
+                    <br />
+                    {order.country}
+                  </td> */}
                   <td className="border border-gray-300 px-4 py-2 w-2/4 text-sm">
                     Order id : {order.order_id}
                     <br />
