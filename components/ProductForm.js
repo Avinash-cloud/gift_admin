@@ -49,7 +49,7 @@ export default function ProductForm({
   const [images, setImages] = useState(existingImages || []);
   const [sku, setSku] = useState(existingSku || "");
   const [id, setId] = useState(existingid || "");
-  const [custom, setCustom] = useState(existingcustom ||false);
+  const [custom, setCustom] = useState(existingcustom || false);
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -175,6 +175,12 @@ export default function ProductForm({
       subcatInfo = subparentCat;
     }
   }
+
+
+  const removeImage = (link) => {
+    const updatedImages = images.filter((img) => img !== link);
+    updateImagesOrder(updatedImages); // Update the images array
+  };
 
   return (
     <form onSubmit={saveProduct}>
@@ -308,9 +314,19 @@ export default function ProductForm({
             images.map((link) => (
               <div
                 key={link}
-                className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
+                className="relative h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200 cursor-pointer"
+                onClick={() => removeImage(link)}  // Remove image on click
               >
                 <img src={link} alt="" className="rounded-lg" />
+                <button
+                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                  onClick={(e) => {
+                    e.stopPropagation();  // Prevent triggering remove on div click
+                    removeImage(link);
+                  }}
+                >
+                  X
+                </button>
               </div>
             ))}
         </ReactSortable>
@@ -335,7 +351,7 @@ export default function ProductForm({
             />
           </svg>
           <div>Add image</div>
-          <input type="file" onChange={uploadImages} className="hidden" />
+          <input type="file" accept="image/*" onChange={uploadImages} className="hidden" />
         </label>
       </div>
       <label>Description</label>
@@ -345,30 +361,30 @@ export default function ProductForm({
         onChange={(ev) => setDescription(ev.target.value)}
       /> */}
 
-<div>
-      <label>Description</label>
-      <ReactQuill
-        value={description}
-        onChange={setDescription}
-        placeholder="Enter description..."
-        modules={{
-          toolbar: [
-            [{ header: '1' }, { header: '2' }, { font: [] }],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-            [{ align: [] }],
-            [{ 'color': [] }, { 'background': [] }],
-            ['link', 'image', 'blockquote', 'code-block'],
-            ['clean'] // remove formatting button
-          ]
-        }}
-        formats={[
-          'header', 'font', 'list', 'bullet',
-          'bold', 'italic', 'underline', 'strike',
-          'align', 'color', 'background', 'link', 'image', 'blockquote', 'code-block'
-        ]}
-      />
-    </div>
+      <div>
+        <label>Description</label>
+        <ReactQuill
+          value={description}
+          onChange={setDescription}
+          placeholder="Enter description..."
+          modules={{
+            toolbar: [
+              [{ header: '1' }, { header: '2' }, { font: [] }],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+              [{ align: [] }],
+              [{ 'color': [] }, { 'background': [] }],
+              ['link', 'image', 'blockquote', 'code-block'],
+              ['clean'] // remove formatting button
+            ]
+          }}
+          formats={[
+            'header', 'font', 'list', 'bullet',
+            'bold', 'italic', 'underline', 'strike',
+            'align', 'color', 'background', 'link', 'image', 'blockquote', 'code-block'
+          ]}
+        />
+      </div>
 
       <label>Short Description Points</label>
       {shortDescriptionPoints.map((point, index) => (
