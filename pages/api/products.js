@@ -47,7 +47,8 @@ export default async function handle(req, res) {
       sku,
       shortDescriptionPoints,
       type
-      ,subcategory,property
+      ,subcategory,
+      property
       ,id
       ,custom
     });
@@ -56,9 +57,37 @@ export default async function handle(req, res) {
   }
   
   if (method === 'PUT') {
-    const {title,stockQuantity,description,sku,price,images,category,properties,shortDescriptionPoints,_id,subcategory,property,type,id,custom} = req.body;
+    const {itle,
+      description,
+      price,
+      discountedPrice,
+      images,
+      category,
+      properties,
+      stockQuantity,
+      sku,
+      shortDescriptionPoints,
+      type
+      ,subcategory,
+      property
+      ,id
+      ,custom,_id} = req.body;
     console.log("put data is", req.body)
-    await Product.updateOne({_id}, {title,stockQuantity,description,price,images,category,properties,sku,shortDescriptionPoints,subcategory,property,type,id,custom});
+    await Product.updateOne({_id}, {itle,
+      description,
+      price,
+      discountedPrice,
+      images,
+      category,
+      properties,
+      stockQuantity,
+      sku,
+      shortDescriptionPoints,
+      type
+      ,subcategory,
+      property
+      ,id
+      ,custom});
     res.json(true);
   }
 
