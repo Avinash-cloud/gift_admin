@@ -3,6 +3,7 @@
 import multiparty from 'multiparty';
 import fs from 'fs';
 import csv from 'csv-parser';
+import iconv from 'iconv-lite'; // import iconv-lite
 import { MongoClient } from 'mongodb';
 
 // MongoDB configuration
@@ -42,6 +43,7 @@ export default async function handle(req, res) {
       // Use a Promise to handle the CSV parsing
       await new Promise((resolve, reject) => {
         fs.createReadStream(filePath)
+          .pipe(iconv.decodeStream('utf-8')) // Handle encoding explicitly
           .pipe(csv())
           .on('headers', (headerList) => {
             headers = headerList;

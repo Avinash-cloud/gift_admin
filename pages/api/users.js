@@ -9,7 +9,7 @@ export default async function handle(req, res) {
 
   if (method === 'GET') {
     
-      res.json(await Users.find());
+      res.json(await Users.find().sort({ _id: -1 }));
      
     }
   }

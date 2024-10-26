@@ -50,72 +50,81 @@ export default function Products() {
     
   ];
 
+  const generateCoolId = (id) => {
+    // Select a part of the original ID, for example, the first 4 and last 4 characters
+    const prefix = "IGU-"; // You can add a prefix if needed
+    const shortId = `${id.slice(0, 4)}-${id.slice(-4)}`; // Taking first 4 and last 4 characters
+    return `${prefix}${shortId}`;
+};
+
   return (
     <Layout>
       
 
-      <div className="justify-center space-x-14 flex m-4 h-10">
-       
+      <div className="flex flex-col md:flex-row md:justify-center md:space-x-14 m-4 overflow-x-auto">
 
-        <div>
-          <label htmlFor="" className="mx-4 font-semibold">
-            Search
-          </label>
-          <input
-            type="search"
-            placeholder="Search by title"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="border px-2 py-1 rounded w-48"
-          />
-        </div>
+<div className="flex items-center mb-4 md:mb-0">
+  <label htmlFor="" className="mx-4 font-semibold">
+    Search
+  </label>
+  <input
+    type="search"
+    placeholder="Search by title"
+    value={searchTerm}
+    onChange={handleSearch}
+    className="border px-2 py-1 rounded w-full md:w-48"
+  />
+</div>
 
-        <div className="flex space-x-2">
-          <CSVLink
-            data={products}
-            headers={headers}
-            filename={"products.csv"}
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Export to CSV
-          </CSVLink>
+<div className="flex space-x-2 mb-4 md:mb-0">
+  <CSVLink
+    data={products}
+    headers={headers}
+    filename={"products.csv"}
+    className="flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-green-700 hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 whitespace-nowrap"
+  >
+    Export to CSV
+  </CSVLink>
 
-          <ReactHTMLTableToExcel
-            id="test-table-xls-button"
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            table="products-table"
-            filename="users"
-            sheet="tablexls"
-            buttonText="Export to Excel"
-          />
-          <a
-            href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-              JSON.stringify(products)
-            )}`}
-            download="products.txt"
-            className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Export to Text
-          </a>
-        </div>
+  <ReactHTMLTableToExcel
+    id="test-table-xls-button"
+    className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 whitespace-nowrap"
+    table="products-table"
+    filename="users"
+    sheet="tablexls"
+    buttonText="Export to Excel"
+  />
+  
+  <a
+    href={`data:text/plain;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(products)
+    )}`}
+    download="products.txt"
+    className="flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-green-700 hover:shadow-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 whitespace-nowrap"
+  >
+    Export to Text
+  </a>
+</div>
 
-        <div className="mb-4 flex">
-          <label className="mr-2">Show</label>
-          <select
-            id="itemsPerPage"
-            value={itemsPerPage}
-            onChange={handleItemsPerPageChange}
-            className="border px-2 py-1 rounded h-9"
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-            <option value={250}>250</option>
-          </select>
-        </div>
-      </div>
+<div className="flex items-center mb-4 md:mb-0">
+  <label className="mr-2">Show</label>
+  <select
+    id="itemsPerPage"
+    value={itemsPerPage}
+    onChange={handleItemsPerPageChange}
+    className="border px-2 py-1 rounded h-9"
+  >
+    <option value={10}>10</option>
+    <option value={20}>20</option>
+    <option value={50}>50</option>
+    <option value={100}>100</option>
+    <option value={250}>250</option>
+  </select>
+</div>
+</div>
 
+
+      <div className="overflow-auto ">
       <table id="products-table" className="border-black  w-full">
         <thead className="bg-gray-50">
           <tr className="divide-x divide-gray-200">
@@ -173,7 +182,7 @@ export default function Products() {
           {currentPageData.map((product) => (
             <tr key={product._id} className="divide-x divide-gray-200">
               <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
-                {product._id}
+                {generateCoolId(product._id)}
               </td>
               <td className="whitespace-nowrap px-12 py-4 text-sm text-gray-900">
                 {product.firstName}
@@ -182,11 +191,13 @@ export default function Products() {
                 {product.lastName}
               </td>
               <td className="px-4 py-4">
-                <div className="text-sm text-gray-500">{product.email}</div>
+                <div className="text-sm text-gray-500">
+                  <a href={`mailto:${product.email}`}>{product.email}</a>
+                  </div>
               </td>
               <td className="px-4 py-4">
                 <div className="text-sm text-gray-500">
-                  {product.phoneNumber}
+                  <a href={`tel:+${product.phoneNumber}`}>{product.phoneNumber}</a>                  
                 </div>
               </td>
               <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
@@ -205,6 +216,8 @@ export default function Products() {
           ))}
         </tbody>
       </table>
+      </div>
+
 
       <ReactPaginate
         previousLabel={"previous"}
@@ -218,7 +231,7 @@ export default function Products() {
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}
         activeClassName={"active"}
-        className="flex mt-10 space-x-10 float-right"
+        className="flex mt-10 space-x-10 float-right overflow-auto w-4/5"
       />
     </Layout>
   );

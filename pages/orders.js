@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { toWords } from 'number-to-words';
+import { toWords } from "number-to-words";
 import Invoice from "@/pages/invoice";
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -102,8 +102,6 @@ export default function OrdersPage() {
 
   const pageCount = Math.ceil(filteredOrders.length / ordersPerPage);
 
- 
-
   const cancleOrder = async (id) => {
     await axios.post(`/api/cancleorder/`, { id });
     window.location.reload();
@@ -123,58 +121,61 @@ export default function OrdersPage() {
     <Layout>
       <h1>Orders</h1>
 
-      <div className="grid mb-4 my-7 gap-5 overflow-x-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4 my-7 gap-5 overflow-x-auto">
         <input
           type="text"
           placeholder="Search by product title"
           value={search}
           onChange={handleSearchChange}
-          className="border px-2 py-1 rounded"
+          className="border px-2 py-1 rounded w-full"
         />
-        <div className="flex gap-11 justify-center w-1/3">
+
+        <div className="flex gap-2 justify-center w-full">
           <button
             onClick={() => handleExport("csv")}
-            className="ml-2 bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded"
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded flex-1"
           >
             Export CSV
           </button>
           <button
             onClick={() => handleExport("excel")}
-            className="ml-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded flex-1"
           >
             Export Excel
           </button>
           <button
             onClick={() => handleExport("txt")}
-            className="ml-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded flex-1"
           >
             Export Txt
           </button>
         </div>
-        <div className="flex gap-11 justify-center w-1/3">
+
+        <div className="flex gap-2 justify-center w-full">
           <input
             type="date"
             value={fromDate}
             onChange={handleFromDateChange}
-            className="border px-2 py-1 rounded ml-2"
+            className="border px-2 py-1 rounded w-full"
           />
           <input
             type="date"
             value={toDate}
             onChange={handleToDateChange}
-            className="border px-2 py-1 rounded ml-2"
+            className="border px-2 py-1 rounded w-full"
           />
           <button
             onClick={handleResetDates}
-            className="w-full ml-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded"
+            className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-2 rounded flex-1"
           >
             Reset Dates
           </button>
         </div>
+
         <select
           onChange={handleRowsPerPageChange}
           value={rowsPerPage}
-          className="ml-2 border px-2 py-1 rounded"
+          className="border px-2 py-1 rounded w-full"
         >
           <option value={10}>10 rows</option>
           <option value={20}>20 rows</option>
@@ -232,12 +233,14 @@ export default function OrdersPage() {
                   <td className="border border-gray-300 px-4 py-2">
                     <div>Name : {order.buyer_name}</div> <br />
                     <div>Contact No : {order.phone}</div> <br />
-                    <div><span>Email: {order.email}</span></div>
-                   <p className="font-bold"> Address</p>
                     <div>
-                    {order.address}, {order.city}, {order.postalCode}
-                    <br />
-                    {order.country}
+                      <span>Email: {order.email}</span>
+                    </div>
+                    <p className="font-bold"> Address</p>
+                    <div>
+                      {order.address}, {order.city}, {order.postalCode}
+                      <br />
+                      {order.country}
                     </div>
                   </td>
                   {/* <td className="border border-gray-300 px-4 py-2 w-2/4">
@@ -280,40 +283,45 @@ export default function OrdersPage() {
                   </td>
                   <td className="border border-gray-300 px-4 py-2 w-2/4">
                     {/* {order.storedusername ? ( */}
-                      <div className="overflow-auto w-60 h-32 flex flex-col  ">
-                        <span>
-                          <span className="font-semibold">Message :</span>{" "}
-                          &quot;
-                          {order.storedMessage}&quot;
-                        </span>
-                        <p><span className="font-semibold">Name :</span>{order.storedusername} </p>
-                        <p><span className="font-semibold">Number :</span>{order.storednumber}</p>
+                    <div className="overflow-auto w-60 h-32 flex flex-col  ">
+                      <span>
+                        <span className="font-semibold">Message :</span> &quot;
+                        {order.storedMessage}&quot;
+                      </span>
+                      <p>
+                        <span className="font-semibold">Name :</span>
+                        {order.storedusername}{" "}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Number :</span>
+                        {order.storednumber}
+                      </p>
 
-                        {order.storedImageUrl &&
-                          order.storedImageUrl.map((url, index) => (
-                            <div key={index} className="mb-4">
-                              {/* Display the image */}
-                              <img
-                                src={url}
-                                alt={`Image ${index + 1}`}
-                                height={100}
-                                width={100}
-                                className="rounded"
-                              />
+                      {order.storedImageUrl &&
+                        order.storedImageUrl.map((url, index) => (
+                          <div key={index} className="mb-4">
+                            {/* Display the image */}
+                            <img
+                              src={url}
+                              alt={`Image ${index + 1}`}
+                              height={100}
+                              width={100}
+                              className="rounded"
+                            />
 
-                              {/* Download button */}
-                              <a
-                                href={url}
-                                download={`image-${index + 1}`}
-                                className="ml-2"
-                              >
-                                <button className="bg-blue-500 text-white mt-1 p-1 rounded">
-                                  Download
-                                </button>
-                              </a>
-                            </div>
-                          ))}
-                      </div>
+                            {/* Download button */}
+                            <a
+                              href={url}
+                              download={`image-${index + 1}`}
+                              className="ml-2"
+                            >
+                              <button className="bg-blue-500 text-white mt-1 p-1 rounded">
+                                Download
+                              </button>
+                            </a>
+                          </div>
+                        ))}
+                    </div>
                     {/* ) : null} */}
                   </td>
 
@@ -322,13 +330,8 @@ export default function OrdersPage() {
                       {/* If the order is "new", show all buttons */}
                       {order.status === "NEW" && (
                         <>
-                          <button
-                            
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
-                          >
-                            <a href={`invoice/${order._id}`}>
-                            Invoice
-                            </a>
+                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded">
+                            <a href={`invoice/${order._id}`}>Invoice</a>
                           </button>
                           <button
                             onClick={() => deleveredOrder(order._id)}
@@ -360,13 +363,8 @@ export default function OrdersPage() {
                       {/* If the order is "Delivered", show only the Invoice button */}
                       {order.status === "Delivered" && (
                         <>
-                          <button
-                            
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
-                          >
-                            <a href={`invoice/${order._id}`}>
-                            Invoice
-                            </a>
+                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded">
+                            <a href={`invoice/${order._id}`}>Invoice</a>
                           </button>
                           <button
                             disabled
