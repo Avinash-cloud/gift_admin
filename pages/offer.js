@@ -115,6 +115,75 @@ function Offer() {
     }
   };
 
+  const [AllCollections, setAllCollections] = useState([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    tagline: "",
+    discount_text: "",
+    discount: "",
+    img_src: "",
+    order_link: "",
+  });
+  const [editingId, setEditingId] = useState(null); // ID of the AllCollection being edited
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    fetchAllCollections();
+  }, []);
+
+  const fetchAllCollections = async () => {
+    try {
+      const res = await axios.get("/api/AllCollection");
+      setAllCollections(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch AllCollections:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    try {
+      if (editingId) {
+        // Update existing AllCollection
+        const res = await axios.put(
+          `/api/AllCollection?id=${editingId}`,
+          formData
+        );
+        setSuccess("AllCollection updated successfully!");
+      } else {
+        // Add new AllCollection
+        const res = await axios.post("/api/AllCollection", formData);
+        setSuccess("AllCollection added successfully!");
+      }
+
+      fetchAllCollections();
+      resetForm();
+    } catch (error) {
+      setError(error.response?.data?.error || "Something went wrong");
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      tagline: "",
+      discount_text: "",
+      discount: "",
+      img_src: "",
+      order_link: "",
+    });
+    setEditingId(null);
+  };
+
+  const handleEdit = (AllCollection) => {
+    setFormData(AllCollection);
+    setEditingId(AllCollection._id);
+  };
+
   return (
     <Layout>
       <br /> <br />
@@ -204,7 +273,7 @@ function Offer() {
             </div>
           </div>
 
-          <div className="bg-white p-4">
+          {/* <div className="bg-white p-4">
             <div className="container mx-auto py-8 align-center  ">
               <h1 className="text-3xl font-bold mb-4 ">Limited Time Offer</h1>
               <div className="grid grid-cols-2 gap-4 justify-center items-center">
@@ -238,8 +307,124 @@ function Offer() {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
+      </div>
+
+
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-4">Manage AllCollection</h1>
+
+        {/* Error/Success Messages */}
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {success && <div className="text-green-500 mb-4">{success}</div>}
+
+        {/* Form for Adding/Editing Banner */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Title"
+            value={formData.title}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+            className="border p-2 w-full"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Tagline"
+            value={formData.tagline}
+            onChange={(e) =>
+              setFormData({ ...formData, tagline: e.target.value })
+            }
+            className="border p-2 w-full"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Discount Text"
+            value={formData.discount_text}
+            onChange={(e) =>
+              setFormData({ ...formData, discount_text: e.target.value })
+            }
+            className="border p-2 w-full"
+          />
+          <input
+            type="text"
+            placeholder="Discount"
+            value={formData.discount}
+            onChange={(e) =>
+              setFormData({ ...formData, discount: e.target.value })
+            }
+            className="border p-2 w-full"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Image Source"
+            value={formData.img_src}
+            onChange={(e) =>
+              setFormData({ ...formData, img_src: e.target.value })
+            }
+            className="border p-2 w-full"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Order Link"
+            value={formData.order_link}
+            onChange={(e) =>
+              setFormData({ ...formData, order_link: e.target.value })
+            }
+            className="border p-2 w-full"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            {editingId ? "Update Banner" : "Add Banner"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="ml-4 bg-gray-500 text-white px-4 py-2 rounded"
+            >
+              Cancel Edit
+            </button>
+          )}
+        </form>
+
+        {/* List of AllCollection */}
+        <h2 className="text-xl font-bold mt-6">Existing AllCollection</h2>
+        <ul className="mt-4">
+          {AllCollections.map((banner) => (
+            <li key={banner._id} className="border p-4 mb-2">
+              <h3 className="font-bold">{banner.title}</h3>
+              <p>{banner.tagline}</p>
+              <p>Discount: {banner.discount}%</p>
+              <img
+                src={banner.img_src}
+                alt={banner.title}
+                className="w-32 mt-2"
+              />
+              <a
+                href={banner.order_link}
+                className="text-blue-500 mt-2 inline-block"
+              >
+                Order Link
+              </a>
+              <button
+                onClick={() => handleEdit(banner)}
+                className="bg-yellow-500 text-white px-4 py-2 rounded mt-2"
+              >
+                Edit
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </Layout>
   );
