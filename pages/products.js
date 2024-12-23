@@ -11,8 +11,9 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
+  const [loading, setLoading] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     axios.get("/api/products").then((response) => {
@@ -33,10 +34,23 @@ export default function Products() {
     setCurrentPage(0);
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter((product) => {
+    // Filter by search term (product title)
+    const matchesSearchTerm = product.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
+    // Filter by stock status
+    const matchesStockStatus =
+      filter === "all" ||
+      (filter === "finished" && product.stockQuantity == 0) ||
+      (filter === "low" &&
+        product.stockQuantity > 0 &&
+        product.stockQuantity <= 15) ||
+      (filter === "good" && product.stockQuantity > 15);
+
+    return matchesSearchTerm && matchesStockStatus;
+  });
   const offset = currentPage * itemsPerPage;
   const currentPageData = filteredProducts.slice(offset, offset + itemsPerPage);
   const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -130,8 +144,23 @@ export default function Products() {
     setSelectAll(!selectAll);
   };
 
+  const EmptyStockProducts = products.filter(
+    (product) => product.stockQuantity == 0
+  );
+  const lowStockProducts = products.filter(
+    (product) => product.stockQuantity > 0 &&
+    product.stockQuantity <= 15);
+  const StockProducts = products.filter(
+    (product) => product.stockQuantity > 15
+  );
+
   return (
     <Layout>
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+          <Spinner />
+        </div>
+      )}
       <div className="mb-14 overflow-x-auto h-10">
         <Link
           className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
@@ -231,6 +260,57 @@ export default function Products() {
         </button>
       </div>
 
+      <div className="flex justify-end items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
+        <div className="p-6  flex">
+          <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+            <span className="text-lg font-semibold text-gray-700">
+              Total Inventory Number:
+            </span>
+            <span className="text-xl font-bold text-blue-600 ml-2">
+              {products.length}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+            <span className="text-lg font-semibold text-gray-700">Empty: </span>
+            <span className="text-xl font-bold text-red-600">
+              {EmptyStockProducts.length}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+            <span className="text-lg font-semibold text-gray-700">Low: </span>
+            <span className="text-xl font-bold text-yellow-600">
+               {lowStockProducts.length}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+            <span className="text-lg font-semibold text-gray-700">Okay: </span>
+            <span className="text-xl font-bold text-green-600">
+              {StockProducts.length}
+            </span>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="stock-filter" className="mr-2 text-lg text-gray-700">
+            Filter by Stock Status:
+          </label>
+          <select
+            id="stock-filter"
+            className="border border-gray-300 rounded-lg p-2"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">All Products</option>
+            <option value="finished">Finished Stock</option>
+            <option value="low">Low Stock</option>
+            <option value="good">Good Stock</option>
+          </select>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table id="products-table" className="border-collapse w-full mt-11">
           <thead className="bg-gray-50">
@@ -242,7 +322,7 @@ export default function Products() {
               >
                 <span className="flex cursor-pointer">
                   {" "}
-                  Select   <input className="cursor-pointer" type="checkbox" />
+                  Select <input className="cursor-pointer" type="checkbox" />
                 </span>
               </th>
               <th
@@ -297,7 +377,18 @@ export default function Products() {
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {currentPageData.map((product) => (
-              <tr key={product._id} className="divide-x divide-gray-200">
+              <tr
+                key={product._id}
+                className={` divide-x divide-gray-200 ${
+                  product.stockQuantity == 0 ? "bg-red-500/20" : ""
+                }
+              ${
+                product.stockQuantity <= 15 && product.stockQuantity > 0
+                  ? "bg-yellow-500/20"
+                  : ""
+              }
+              ${product.stockQuantity > 10 ? "bg-green-500/20" : ""}`}
+              >
                 <td className="whitespace-nowrap px-4 py-4">
                   <input
                     type="checkbox"

@@ -10,6 +10,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { toWords } from "number-to-words";
 import Invoice from "@/pages/invoice";
+import Spinner from "@/components/Spinner";
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
@@ -18,13 +19,22 @@ export default function OrdersPage() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-
+  const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
   useEffect(() => {
-    axios.get("/api/orders").then((response) => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("/api/orders");
       setOrders(response.data);
       setFilteredOrders(response.data);
-    });
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const filtered = orders.filter((order) => {
@@ -33,13 +43,16 @@ export default function OrdersPage() {
       const to = new Date(toDate);
       const isWithinDateRange =
         (!fromDate || orderDate >= from) && (!toDate || orderDate <= to);
+      const matchesStatus =
+        !statusFilter || order.status?.toLowerCase() === statusFilter;
       return (
         isWithinDateRange &&
+        matchesStatus &&
         order.cart[0].title.toLowerCase().includes(search.toLowerCase())
       );
     });
     setFilteredOrders(filtered);
-  }, [search, orders, fromDate, toDate]);
+  }, [search, orders, fromDate, toDate, statusFilter]);
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
@@ -52,11 +65,16 @@ export default function OrdersPage() {
   const handleToDateChange = (e) => {
     setToDate(e.target.value);
   };
+  const handleStatusChange = (e) => setStatusFilter(e.target.value);
 
   const handleExport = (format) => {
     const exportData = filteredOrders.map((order) => ({
       Date: new Date(order.createdAt).toLocaleString(),
-      Paid: order.paid ? "YES" : "NO",
+      Paid: order.paid ? "Prepaid" : "COD",
+      Bill_Number: order.order_id,
+      MRP: order.cart.reduce((sum, item) => {
+        return sum + item.discountedPrice * item.quantity;
+      }, 0),
       Name: order.buyer_name,
       Email: order.email,
       StreetAddress: order.address,
@@ -104,12 +122,12 @@ export default function OrdersPage() {
 
   const cancleOrder = async (id) => {
     await axios.post(`/api/cancleorder/`, { id });
-    window.location.reload();
+    fetchOrders();
   };
 
   const deleveredOrder = async (id) => {
     await axios.post(`/api/deleveredorder/`, { id });
-    window.location.reload();
+    fetchOrders();
   };
 
   const handleResetDates = () => {
@@ -120,7 +138,12 @@ export default function OrdersPage() {
   return (
     <Layout>
       <h1>Orders</h1>
-
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+          <Spinner />
+        </div>
+      )}
+      {/* Display spinner while loading */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-4 my-7 gap-5 overflow-x-auto">
         <input
           type="text"
@@ -183,6 +206,17 @@ export default function OrdersPage() {
           <option value={100}>100 rows</option>
           <option value={250}>250</option>
         </select>
+
+        <select
+          value={statusFilter}
+          onChange={handleStatusChange}
+          className="border px-2 py-1 rounded w-full"
+        >
+          <option value="">All Status</option>
+          <option value="new">New</option>
+          <option value="canceled">Canceled</option>
+          <option value="delivered">Delivered</option>
+        </select>
       </div>
 
       <div className="overflow-x-auto">
@@ -213,170 +247,152 @@ export default function OrdersPage() {
           <tbody>
             {displayOrders.length > 0 &&
               displayOrders.map((order) => (
-                <tr key={order._id} className="border border-gray-300">
-                  <td className="border border-gray-300 px-4 py-2">
+                <tr
+                  key={order._id}
+                  className="border border-gray-300 bg-white shadow-md hover:shadow-lg transition-shadow duration-200"
+                >
+                  <td className="border px-4 py-3 text-sm">
                     {new Date(order.createdAt).toLocaleString()}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border px-4 py-3 text-center">
                     <img
-                      src={order.cart[0].images[0]}
+                      src={order.cart[0]?.images[0] || "/placeholder-image.png"}
                       alt="Product Image"
-                      className="h-20 w-20 object-cover"
+                      className="h-16 w-16 rounded-md object-cover mx-auto"
                     />
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {order.paid ? "YES" : "NO"}
+                  <td className="border px-4 py-3 text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-white text-xs ${
+                        order.paid ? "bg-green-500" : "bg-yellow-500"
+                      }`}
+                    >
+                      {order.paid ? "Prepaid" : "COD"}
+                    </span>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
+                  <td className="border px-4 py-3 text-sm capitalize">
                     {order.status || "N/A"}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <div>Name : {order.buyer_name}</div> <br />
-                    <div>Contact No : {order.phone}</div> <br />
+                  <td className="border px-4 py-3 text-sm">
                     <div>
-                      <span>Email: {order.email}</span>
+                      <span className="font-semibold">Name: </span>{" "}
+                      {order.buyer_name}
                     </div>
-                    <p className="font-bold"> Address</p>
                     <div>
+                      <span className="font-semibold">Email: </span>{" "}
+                      {order.email}
+                    </div>
+                    <div className="mt-2">
+                      <p className="font-bold">Address:</p>
                       {order.address}, {order.city}, {order.postalCode}
                       <br />
                       {order.country}
                     </div>
                   </td>
-                  {/* <td className="border border-gray-300 px-4 py-2 w-2/4">
-                    {order.address}, {order.city}, {order.postalCode}
-                    <br />
-                    {order.country}
-                  </td> */}
-                  <td className="border border-gray-300 px-4 py-2 w-2/4 text-sm">
-                    Order id : {order.order_id}
-                    <br />
-                    Order Number :
-                    <a
-                      className="text-blue-400"
-                      href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}
-                    >
-                      {" "}
-                      {order.channel_order_id}
-                    </a>
-                    <br />
-                    Shipment Id : {order.shipment_id}
+                  <td className="border px-4 py-3 text-sm">
+                    <div>
+                      <span className="font-semibold">Order ID: </span>{" "}
+                      {order.order_id}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Order Number: </span>
+                      <a
+                        className="text-blue-500 hover:underline"
+                        href={`https://app.shiprocket.in/seller/orders/details/${order.order_id}`}
+                      >
+                        {order.channel_order_id}
+                      </a>
+                    </div>
+                    <div>
+                      <span className="font-semibold">Shipment ID: </span>{" "}
+                      {order.shipment_id}
+                    </div>
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <div className="w-60">
-                      {order.cart.map((item, index) => (
-                        <div className="overflow-auto w-full" key={index}>
-                          <div>
-                            Products :{" "}
-                            <a
-                              href={`https://www.internationalgift.in/product/${item._id}`}
-                              className="text-blue-400"
-                            >
-                              {item.title}
-                            </a>
-                          </div>{" "}
-                          <div> Quantity : {item.quantity}</div>
-                          <br />
+                  <td className="border px-4 py-3 text-sm">
+                    {order.cart.map((item, index) => (
+                      <div key={index} className="mb-2">
+                        <div>
+                          <span className="font-semibold">Product: </span>
+                          <a
+                            href={`https://www.internationalgift.in/product/${item._id}`}
+                            className="text-blue-500 hover:underline"
+                          >
+                            {item.title}
+                          </a>
                         </div>
-                      ))}
-                    </div>
+                        <div>
+                          <span className="font-semibold">Quantity: </span>{" "}
+                          {item.quantity}
+                        </div>
+                      </div>
+                    ))}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 w-2/4">
-                    {/* {order.storedusername ? ( */}
-                    <div className="overflow-auto w-60 h-32 flex flex-col  ">
-                      <span>
-                        <span className="font-semibold">Message :</span> &quot;
-                        {order.storedMessage}&quot;
-                      </span>
-                      <p>
-                        <span className="font-semibold">Name :</span>
-                        {order.storedusername}{" "}
-                      </p>
-                      <p>
-                        <span className="font-semibold">Number :</span>
-                        {order.storednumber}
-                      </p>
-
-                      {order.storedImageUrl &&
-                        order.storedImageUrl.map((url, index) => (
-                          <div key={index} className="mb-4">
-                            {/* Display the image */}
-                            <img
-                              src={url}
-                              alt={`Image ${index + 1}`}
-                              height={100}
-                              width={100}
-                              className="rounded"
-                            />
-
-                            {/* Download button */}
-                            <a
-                              href={url}
-                              download={`image-${index + 1}`}
-                              className="ml-2"
-                            >
-                              <button className="bg-blue-500 text-white mt-1 p-1 rounded">
-                                Download
-                              </button>
-                            </a>
-                          </div>
-                        ))}
+                  <td className="border px-4 py-3 text-sm">
+                    <div>
+                      <span className="font-semibold">Message: </span>{" "}
+                      {order.storedMessage || "N/A"}
                     </div>
-                    {/* ) : null} */}
+                    <div>
+                      <span className="font-semibold">Name: </span>{" "}
+                      {order.storedusername || "N/A"}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Number: </span>{" "}
+                      {order.storednumber || "N/A"}
+                    </div>
+                    {order.storedImageUrl?.map((url, index) => (
+                      <div
+                        key={index}
+                        className="mt-2 flex items-center space-x-2"
+                      >
+                        <img
+                          src={url}
+                          alt={`Image ${index + 1}`}
+                          className="h-12 w-12 rounded-md object-cover"
+                        />
+                        <a
+                          href={url}
+                          download={`image-${index + 1}`}
+                          className="bg-blue-500 text-white text-xs px-2 py-1 rounded hover:bg-blue-600"
+                        >
+                          Download
+                        </a>
+                      </div>
+                    ))}
                   </td>
-
-                  <td className="border border-gray-300 px-4 py-2 text-center align-middle">
-                    <div className="flex flex-col justify-center items-center space-y-2">
-                      {/* If the order is "new", show all buttons */}
+                  <td className="border px-4 py-3 text-center">
+                    <div className="flex flex-col space-y-2">
                       {order.status === "NEW" && (
                         <>
-                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded">
+                          <button className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
                             <a href={`invoice/${order._id}`}>Invoice</a>
                           </button>
                           <button
                             onClick={() => deleveredOrder(order._id)}
-                            className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded w-24"
+                            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
                           >
                             Ship Now
                           </button>
                           <button
                             onClick={() => cancleOrder(order._id)}
-                            className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded"
+                            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
                           >
                             Cancel
                           </button>
                         </>
                       )}
-
-                      {/* If the order is "canceled", show disabled buttons */}
                       {order.status === "canceled" && (
-                        <>
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
-                          >
-                            Cancel
-                          </button>
-                        </>
+                        <button
+                          disabled
+                          className="bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed"
+                        >
+                          Canceled
+                        </button>
                       )}
-
-                      {/* If the order is "Delivered", show only the Invoice button */}
                       {order.status === "Delivered" && (
                         <>
-                          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded">
+                          <button className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
                             <a href={`invoice/${order._id}`}>Invoice</a>
-                          </button>
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
-                          >
-                            Ship Now
-                          </button>
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white font-bold py-1 px-2 rounded cursor-not-allowed"
-                          >
-                            Cancel
                           </button>
                         </>
                       )}

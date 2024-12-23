@@ -125,6 +125,10 @@ export default function ProductForm({
   function updateImagesOrder(images) {
     setImages(images);
   }
+  const removeImage = (link) => {
+    const updatedImages = images.filter((img) => img !== link);
+    updateImagesOrder(updatedImages); // Update the images array
+  };
 
   function setProductProp(propName, value) {
     setProductProperty((prev) => {
@@ -177,10 +181,7 @@ export default function ProductForm({
   }
 
 
-  const removeImage = (link) => {
-    const updatedImages = images.filter((img) => img !== link);
-    updateImagesOrder(updatedImages); // Update the images array
-  };
+  
 
   return (
     <form onSubmit={saveProduct}>
