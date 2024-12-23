@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { signIn } from "next-auth/react";
-export default function login() {
+export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
