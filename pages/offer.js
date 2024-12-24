@@ -360,6 +360,7 @@ function Offer() {
             className="border p-2 w-full"
             required
           />
+          <label className="text-black">Image size 300 x 300</label>
           <input
             type="text"
             placeholder="Image Source"

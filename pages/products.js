@@ -5,6 +5,7 @@ import axios from "axios";
 import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import Spinner from "@/components/Spinner";
 
 export default function Products() {
   const [products, setProducts] = useState([]);

@@ -185,7 +185,7 @@ const SalesChart = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6">
             {/* Card for Today's Sales */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                <h2 className="text-2xl font-semibold text-blue-600 mb-2">Today's Sales</h2>
+                <h2 className="text-2xl font-semibold text-blue-600 mb-2">Today&apos;s Sales</h2>
                 <p className="text-3xl font-bold text-gray-800">Total ₹{todaySales}</p>
                 <p className="text-xl text-red-500 mt-1">Canceled ₹{canceledTodaySales}</p>
                 <p className="text-xl text-green-500 mt-1">Net ₹{netTodaySales}</p>
