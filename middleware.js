@@ -9,7 +9,7 @@ export function middleware(req) {
   const publicPaths = ['/login', '/public/images', '/public/css'];
 
   // Check if the user is authenticated (this example uses a cookie named "authToken")
-  const authToken =  req.cookies.get('next-auth.session-token');
+  const authToken =  req.cookies.get('next-auth.session-token') || req.cookies.get('__Secure-next-auth.session-token');
 
   // Allow access if the user is logged in or the path is public
   if (authToken || publicPaths.some(path => pathname.startsWith(path))) {
