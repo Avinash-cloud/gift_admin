@@ -18,9 +18,8 @@ export default function Setting() {
 
 
 
-  async function logout() {
-    await router.push('/');
-    await signOut();
+  const logout = async()=> {
+    await signOut({ callbackUrl: '/' });
   }
 
   const handleSubmit = async (e) => {
