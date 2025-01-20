@@ -7,6 +7,10 @@ const ProductSchema = new Schema({
     required: true,
     trim: true
   },
+  tags: {
+    type: [String],
+    trim: true
+  },
   description: {
     type: String,
     required: true,

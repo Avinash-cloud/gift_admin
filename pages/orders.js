@@ -81,8 +81,8 @@ export default function OrdersPage() {
       City: order.city,
       PostalCode: order.postalCode,
       Country: order.country,
-      Products: order.cart.map((item) => item.title).join(", "),
-      Quantity: order.cart.map((item) => item.quantity).join(", "),
+      Products: order.cart.map((item) => item.title).join("#"),
+      Quantity: order.cart.map((item) => item.quantity).join("#"),
     }));
 
     if (format === "csv" || format === "excel") {
@@ -227,7 +227,7 @@ export default function OrdersPage() {
               <th className="border border-gray-300 px-4 py-2">Image</th>
               <th className="border border-gray-300 px-4 py-2">Paid</th>
               <th className="border border-gray-300 px-4 py-2">Status</th>
-              <th className="border border-gray-300 px-4 py-2">Recipient</th>
+              <th className="border border-gray-300 px-4 py-2 w-64">Recipient</th>
 
               {/* <th className="border border-gray-300 px-4 py-2">
                 Address Information
@@ -237,6 +237,9 @@ export default function OrdersPage() {
               </th>
               <th className="border border-gray-300 px-4 py-2 w-11/12">
                 Products & Quantity{" "}
+              </th>
+              <th className="border border-gray-300 px-4 py-2">
+                Paid Amount
               </th>
               <th className="border border-gray-300 px-4 py-2">
                 Customization
@@ -273,14 +276,15 @@ export default function OrdersPage() {
                   <td className="border px-4 py-3 text-sm capitalize">
                     {order.status || "N/A"}
                   </td>
-                  <td className="border px-4 py-3 text-sm">
+                  <td className="border px-4 py-3 text-sm w-2/6">
                     <div>
                       <span className="font-semibold">Name: </span>{" "}
                       {order.buyer_name}
                     </div>
                     <div>
-                      <span className="font-semibold">Email: </span>{" "}
-                      {order.email}
+                      <span className="font-semibold">Number: </span>{" "}
+                      
+                      {order.phone}
                     </div>
                     <div className="mt-2">
                       <p className="font-bold">Address:</p>
@@ -289,6 +293,7 @@ export default function OrdersPage() {
                       {order.country}
                     </div>
                   </td>
+                  
                   <td className="border px-4 py-3 text-sm">
                     <div>
                       <span className="font-semibold">Order ID: </span>{" "}
@@ -326,6 +331,12 @@ export default function OrdersPage() {
                         </div>
                       </div>
                     ))}
+                  </td>
+                  <td className="border px-4 py-3 text-sm capitalize ">
+                    <span className="bg-green-200 text-black p-1 rounded-xl"> 
+                    Rs {order.paidAmount || "N/A"}
+                    </span>
+                    
                   </td>
                   <td className="border px-4 py-3 text-sm">
                     <div>
