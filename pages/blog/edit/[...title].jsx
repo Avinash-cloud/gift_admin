@@ -74,7 +74,7 @@ export default function EditBlog() {
             if (result.success) {
                 setBlogTitle(result.data?.title);
                 setContent(result.data?.content);
-                setImages(result.data?.cardImage);
+                setImages([result.data?.cardImage]);
                 setUrl(result.data?.url);
                 setmtitle(result.data?.mtitle);
                 setmdiscription(result.data?.mdiscription);
@@ -103,7 +103,7 @@ export default function EditBlog() {
             //console.log("url are", URL);
             const res = await axios.post(`${URL}:5000/api/upload`, data);
             // console.log(res);
-            setImages(res.data.fileUrl)
+            setImages([res.data.fileUrl])
             setIsUploading(false);
         }
     }
@@ -146,7 +146,7 @@ export default function EditBlog() {
         const blogData = {
             title: blogTitle,
             content,
-            cardImage:images,
+            cardImage: images[0],
             url,
             mtitle,
             mdiscription,
@@ -174,6 +174,16 @@ export default function EditBlog() {
                 });
         }
     };
+
+
+    const removeImage = (index) => {
+        const updatedImages = images.filter((_, i) => i !== index);
+        setImages(updatedImages); // Update your state with the new array
+    };
+
+
+    console.log("images",images);
+    
 
     return (
         <Layout>
@@ -251,16 +261,40 @@ export default function EditBlog() {
                             setList={updateImagesOrder}
                         >
                             {!!images?.length &&
-                                // images.map((link) => (
-                                <div
-
-                                    className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
-                                >
-                                    <img src={images} alt="" className="rounded-lg" height={100} width={100} />
-
-                                </div>
-                                // ))
-                            }
+                                images?.map((link, index) => (
+                                    <div
+                                        key={link}
+                                        className="relative h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
+                                    >
+                                        <img
+                                            src={link}
+                                            alt=""
+                                            className="rounded-lg"
+                                            height={100}
+                                            width={100}
+                                        />
+                                        {/* Remove button */}
+                                        <button
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={2}
+                                                stroke="currentColor"
+                                                className="w-4 h-4"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                ))}
                         </ReactSortable>
                         {isUploading && (
                             <div className="h-24 flex items-center">
@@ -287,6 +321,7 @@ export default function EditBlog() {
                         </label>
                     </div>
 
+
                     <div>
                         <label>Title:</label>
                         <input
@@ -299,10 +334,10 @@ export default function EditBlog() {
                     <div>
                         <label>Content:</label>
                         <JoditEditor
-                                value={content}
-                                config={editorConfig}
-                                onChange={(value) => setContent(value)}
-                            />
+                            value={content}
+                            config={editorConfig}
+                            onChange={(value) => setContent(value)}
+                        />
                         <button type="submit" className="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-600/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 mt-14 ml-96" >Save</button>
                     </div>
                 </form>
@@ -449,7 +484,7 @@ const buttons = [
 //     uploader: {
 //         insertImageAsBase64URI: true
 //     },
-   
+
 //     height: 842,
 //     style: {
 //         font: [
@@ -480,17 +515,17 @@ const editorConfig = {
     height: 842,
     style: {
         font: [
-          
+
             { name: "Poppins", value: "'Poppins', sans-serif" } // Added Poppins font
         ]
     },
     controls: {
         font: {
             list: {
-                
+
                 "Poppins": "'Poppins', sans-serif" // Add Poppins here too
             }
         },
-        
+
     }
 };
