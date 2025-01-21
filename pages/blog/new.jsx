@@ -135,7 +135,11 @@ const NewBlog = () => {
         'font', 'align',
         'clean'
     ];
-
+    const removeImage = (index) => {
+        const updatedImages = images.filter((_, i) => i !== index);
+        setImages(updatedImages); // Update your state with the new array
+    };
+    
     return (
         <Layout>
             <div className="">
@@ -202,13 +206,38 @@ const NewBlog = () => {
                             setList={updateImagesOrder}
                         >
                             {!!images?.length &&
-                                images.map((link) => (
+                                images.map((link, index) => (
                                     <div
                                         key={link}
-                                        className="h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
+                                        className="relative h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200"
                                     >
-                                        <img src={link} alt="" className="rounded-lg" height={100} width={100} />
-
+                                        <img
+                                            src={link}
+                                            alt=""
+                                            className="rounded-lg"
+                                            height={100}
+                                            width={100}
+                                        />
+                                        {/* Remove button */}
+                                        <button
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={2}
+                                                stroke="currentColor"
+                                                className="w-4 h-4"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M6 18L18 6M6 6l12 12"
+                                                />
+                                            </svg>
+                                        </button>
                                     </div>
                                 ))}
                         </ReactSortable>
@@ -236,6 +265,7 @@ const NewBlog = () => {
                             <input type="file" onChange={uploadImages} className="hidden" />
                         </label>
                     </div>
+
 
                     <div className="mt-4">
 
@@ -420,7 +450,7 @@ const buttons = [
 //     uploader: {
 //         insertImageAsBase64URI: true
 //     },
-   
+
 //     height: 842,
 //     style: {
 //         font: [
@@ -451,17 +481,17 @@ const editorConfig = {
     height: 842,
     style: {
         font: [
-          
+
             { name: "Poppins", value: "'Poppins', sans-serif" } // Added Poppins font
         ]
     },
     controls: {
         font: {
             list: {
-                
+
                 "Poppins": "'Poppins', sans-serif" // Add Poppins here too
             }
         },
-        
+
     }
 };
