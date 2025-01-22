@@ -1,6 +1,5 @@
-import Layout from '@/components/Layout'
-import React from 'react'
-import { useEffect, useState } from 'react';
+import Layout from '@/components/Layout';
+import React, { useEffect, useState } from 'react';
 
 const Cuppon = () => {
     const [coupons, setCoupons] = useState([]);
@@ -9,7 +8,6 @@ const Cuppon = () => {
         desc: '',
         code: '',
         discountPercent: '',
-        discountAmount: '',
     });
     const [editingCoupon, setEditingCoupon] = useState(null);
 
@@ -36,7 +34,6 @@ const Cuppon = () => {
             desc: '',
             code: '',
             discountPercent: '',
-            discountAmount: '',
         });
         setEditingCoupon(null);
         fetchCoupons();
@@ -65,7 +62,6 @@ const Cuppon = () => {
             desc: coupon.desc,
             code: coupon.code,
             discountPercent: coupon.discountPercent || '',
-            discountAmount: coupon.discountAmount || '',
         });
     };
 
@@ -75,6 +71,7 @@ const Cuppon = () => {
             fetchCoupons();
         }
     };
+
     return (
         <Layout>
             <div className="max-w-4xl mx-auto p-6">
@@ -116,28 +113,15 @@ const Cuppon = () => {
                         />
                     </div>
 
-                    <div className="flex space-x-4">
-                        <div className="flex-1">
-                            <label htmlFor="discountPercent" className="block text-sm font-semibold text-gray-700">Discount Percentage</label>
-                            <input
-                                id="discountPercent"
-                                type="number"
-                                value={formData.discountPercent}
-                                onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
-                                className="mt-1 p-2 w-full border border-gray-300 rounded"
-                            />
-                        </div>
-
-                        <div className="flex-1">
-                            <label htmlFor="discountAmount" className="block text-sm font-semibold text-gray-700">Discount Amount</label>
-                            <input
-                                id="discountAmount"
-                                type="number"
-                                value={formData.discountAmount}
-                                onChange={(e) => setFormData({ ...formData, discountAmount: e.target.value })}
-                                className="mt-1 p-2 w-full border border-gray-300 rounded"
-                            />
-                        </div>
+                    <div>
+                        <label htmlFor="discountPercent" className="block text-sm font-semibold text-gray-700">Discount Percentage</label>
+                        <input
+                            id="discountPercent"
+                            type="number"
+                            value={formData.discountPercent}
+                            onChange={(e) => setFormData({ ...formData, discountPercent: e.target.value })}
+                            className="mt-1 p-2 w-full border border-gray-300 rounded"
+                        />
                     </div>
 
                     <button type="submit" className="mt-4 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
@@ -152,7 +136,7 @@ const Cuppon = () => {
                             <tr className="bg-gray-100">
                                 <th className="px-4 py-2 text-left">Title</th>
                                 <th className="px-4 py-2 text-left">Code</th>
-                                <th className="px-4 py-2 text-left">Discount</th>
+                                <th className="px-4 py-2 text-left">Discount Percentage</th>
                                 <th className="px-4 py-2 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -161,9 +145,7 @@ const Cuppon = () => {
                                 <tr key={coupon._id} className="border-t">
                                     <td className="px-4 py-2">{coupon.title}</td>
                                     <td className="px-4 py-2">{coupon.code}</td>
-                                    <td className="px-4 py-2">
-                                        {coupon.discountPercent ? `${coupon.discountPercent}%` : `₹${coupon.discountAmount}`}
-                                    </td>
+                                    <td className="px-4 py-2">{coupon.discountPercent}%</td>
                                     <td className="px-4 py-2 space-x-2">
                                         <button
                                             onClick={() => handleEdit(coupon)}
@@ -185,7 +167,7 @@ const Cuppon = () => {
                 </div>
             </div>
         </Layout>
-    )
-}
+    );
+};
 
-export default Cuppon
+export default Cuppon;

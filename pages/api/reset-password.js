@@ -11,8 +11,11 @@ export default async function handler(req, res) {
   }
 
   const {  otp, newPassword } = req.body;
+  if(!otp || !newPassword){
+    return res.status(400).json({ message: 'Please fill in all fields' });
+  }
 
-  const otpRecord = await adminotps.find({otp });
+  const otpRecord = await adminotps.findOne({otp });
 
   if (!otpRecord) {
     return res.status(400).json({ message: 'Invalid OTP' });

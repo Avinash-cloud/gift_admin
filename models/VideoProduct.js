@@ -2,7 +2,11 @@
 import mongoose from 'mongoose';
 
 const VideoProductSchema = new mongoose.Schema({
-  url: {
+  videoUrl: {
+    type: String,
+    required: true,
+  },
+  productUrl: {
     type: String,
     required: true,
   },

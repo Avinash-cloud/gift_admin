@@ -23,6 +23,10 @@ export default async function handler(req, res) {
         if (product) {
           if (product.stockQuantity >= item.quantity) {
             product.stockQuantity -= item.quantity;
+      
+            // Ensure custom field is cast to boolean before saving
+            product.custom = Boolean(product.custom); 
+      
             await product.save();
           } else {
             return res.status(400).json({
@@ -37,8 +41,18 @@ export default async function handler(req, res) {
       }
 
       // Update the order status to "Delivered"
-      order.status = "Delivered";
-      await order.save();
+      // order.status = "Delivered";
+      // await order.save();
+
+      const updatedOrder = await Order.updateOne(
+        { _id: id },
+        { $set: { status: "Delivered" } }
+      );
+
+      if (!updatedOrder) {
+        console.log(`No order found with order_id: ${id}`);
+        return res.status(404).json({ error: "Order not found" });
+      }
 
       console.log("Order updated successfully:", order);
 
@@ -47,11 +61,8 @@ export default async function handler(req, res) {
         message: "Order status updated to Delivered, and stock adjusted.",
       });
     } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message,
-        error
-      );
+      console.log(error);
+      
       res.status(500).json({ error: error.message });
     }
   } else {
