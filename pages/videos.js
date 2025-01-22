@@ -1,11 +1,11 @@
-// src/components/VideoProductAdmin.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '@/components/Layout';
 
 const VideoProductAdmin = () => {
     const [videoProducts, setVideoProducts] = useState([]);
-    const [url, setUrl] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
+    const [productUrl, setProductUrl] = useState('');
     const [editId, setEditId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -34,14 +34,15 @@ const VideoProductAdmin = () => {
         } else {
             await addVideoProduct();
         }
-        setUrl('');
+        setVideoUrl('');
+        setProductUrl('');
         setEditId(null);
     };
 
     // Add a new video product
     const addVideoProduct = async () => {
         try {
-            await axios.post('/api/videoProduct', { url });
+            await axios.post('/api/videoProduct', { videoUrl, productUrl });
             fetchVideoProducts();
         } catch (error) {
             console.error('Error adding video product:', error);
@@ -51,7 +52,7 @@ const VideoProductAdmin = () => {
     // Update an existing video product
     const updateVideoProduct = async (id) => {
         try {
-            await axios.put(`/api/videoProduct?id=${id}`, { url });
+            await axios.put(`/api/videoProduct?id=${id}`, { videoUrl, productUrl });
             fetchVideoProducts();
         } catch (error) {
             console.error('Error updating video product:', error);
@@ -71,9 +72,10 @@ const VideoProductAdmin = () => {
     };
 
     // Edit a video product
-    const handleEdit = (id, url) => {
+    const handleEdit = (id, videoUrl, productUrl) => {
         setEditId(id);
-        setUrl(url);
+        setVideoUrl(videoUrl);
+        setProductUrl(productUrl);
     };
 
     return (
@@ -83,12 +85,20 @@ const VideoProductAdmin = () => {
 
                 {/* Add/Edit Form */}
                 <form onSubmit={handleSubmit} className="mb-6">
-                    <div className="flex items-center space-x-4">
+                    <div className="space-y-4">
                         <input
                             type="url"
-                            value={url}
-                            onChange={(e) => setUrl(e.target.value)}
+                            value={videoUrl}
+                            onChange={(e) => setVideoUrl(e.target.value)}
                             placeholder="Enter video URL"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+                            required
+                        />
+                        <input
+                            type="url"
+                            value={productUrl}
+                            onChange={(e) => setProductUrl(e.target.value)}
+                            placeholder="Enter product URL"
                             className="w-full px-4 py-2 border border-gray-300 rounded-md"
                             required
                         />
@@ -109,7 +119,8 @@ const VideoProductAdmin = () => {
                         <thead>
                             <tr className="bg-gray-100">
                                 <th className="px-4 py-2 text-left">#</th>
-                                <th className="px-4 py-2 text-left">URL</th>
+                                <th className="px-4 py-2 text-left">Video URL</th>
+                                <th className="px-4 py-2 text-left">Product URL</th>
                                 <th className="px-4 py-2 text-left">Actions</th>
                             </tr>
                         </thead>
@@ -119,17 +130,27 @@ const VideoProductAdmin = () => {
                                     <td className="px-4 py-2">{index + 1}</td>
                                     <td className="px-4 py-2">
                                         <a
-                                            href={product.url}
+                                            href={product.videoUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-500"
                                         >
-                                            {product.url}
+                                            {product.videoUrl}
+                                        </a>
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        <a
+                                            href={product.productUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500"
+                                        >
+                                            {product.productUrl}
                                         </a>
                                     </td>
                                     <td className="px-4 py-2">
                                         <button
-                                            onClick={() => handleEdit(product._id, product.url)}
+                                            onClick={() => handleEdit(product._id, product.videoUrl, product.productUrl)}
                                             className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 mr-2"
                                         >
                                             Edit

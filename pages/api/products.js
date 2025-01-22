@@ -31,7 +31,8 @@ export default async function handle(req, res) {
       shortDescriptionPoints
       ,subcategory,property
       ,id,
-      custom
+      custom,
+      tags
     } = req.body;
     console.log("at creation" ,req.body)
   
@@ -50,7 +51,8 @@ export default async function handle(req, res) {
       ,subcategory,
       property
       ,id
-      ,custom
+      ,custom,
+      tags
     });
   
     res.json(productDoc);
@@ -71,7 +73,7 @@ export default async function handle(req, res) {
       ,subcategory,
       property
       ,id
-      ,custom,_id} = req.body;
+      ,custom,tags,_id} = req.body;
     console.log("put data is", req.body)
     await Product.updateOne({_id}, {itle,
       description,
@@ -87,7 +89,7 @@ export default async function handle(req, res) {
       ,subcategory,
       property
       ,id
-      ,custom});
+      ,custom,tags});
     res.json(true);
   }
 

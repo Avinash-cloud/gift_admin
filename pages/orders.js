@@ -120,14 +120,31 @@ export default function OrdersPage() {
 
   const pageCount = Math.ceil(filteredOrders.length / ordersPerPage);
 
-  const cancleOrder = async (id) => {
-    await axios.post(`/api/cancleorder/`, { id });
-    fetchOrders();
+  const cancelOrder = async (id) => {
+    try {
+      await axios.post(`/api/cancleorder/`, { id });
+      fetchOrders(); // Refresh orders after cancellation
+    } catch (error) {
+      console.error("Error canceling order:", error);
+    }
   };
 
-  const deleveredOrder = async (id) => {
-    await axios.post(`/api/deleveredorder/`, { id });
-    fetchOrders();
+  const handleShipping = async (id) => {
+    try {
+      await axios.post(`/api/shiporder/`, { id });
+      fetchOrders(); // Update state to "Shipping"
+    } catch (error) {
+      console.error("Error updating to shipping:", error);
+    }
+  };
+
+  const markDelivered = async (id) => {
+    try {
+      await axios.post(`/api/deleveredorder/`, { id });
+      fetchOrders(); // Update state to "Delivered"
+    } catch (error) {
+      console.error("Error marking as delivered:", error);
+    }
   };
 
   const handleResetDates = () => {
@@ -266,9 +283,8 @@ export default function OrdersPage() {
                   </td>
                   <td className="border px-4 py-3 text-sm">
                     <span
-                      className={`px-2 py-1 rounded-full text-white text-xs ${
-                        order.paid ? "bg-green-500" : "bg-yellow-500"
-                      }`}
+                      className={`px-2 py-1 rounded-full text-white text-xs ${order.paid ? "bg-green-500" : "bg-yellow-500"
+                        }`}
                     >
                       {order.paid ? "Prepaid" : "COD"}
                     </span>
@@ -283,7 +299,7 @@ export default function OrdersPage() {
                     </div>
                     <div>
                       <span className="font-semibold">Number: </span>{" "}
-                      
+
                       {order.phone}
                     </div>
                     <div className="mt-2">
@@ -293,7 +309,7 @@ export default function OrdersPage() {
                       {order.country}
                     </div>
                   </td>
-                  
+
                   <td className="border px-4 py-3 text-sm">
                     <div>
                       <span className="font-semibold">Order ID: </span>{" "}
@@ -333,10 +349,10 @@ export default function OrdersPage() {
                     ))}
                   </td>
                   <td className="border px-4 py-3 text-sm capitalize ">
-                    <span className="bg-green-200 text-black p-1 rounded-xl"> 
-                    Rs {order.paidAmount || "N/A"}
+                    <span className="bg-green-200 text-black p-1 rounded-xl">
+                      Rs {order.paidAmount || "N/A"}
                     </span>
-                    
+
                   </td>
                   <td className="border px-4 py-3 text-sm">
                     <div>
@@ -379,13 +395,32 @@ export default function OrdersPage() {
                             <a href={`invoice/${order._id}`}>Invoice</a>
                           </button>
                           <button
-                            onClick={() => deleveredOrder(order._id)}
-                            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+                            onClick={() => handleShipping(order._id)}
+                            className="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600"
                           >
                             Ship Now
                           </button>
                           <button
-                            onClick={() => cancleOrder(order._id)}
+                            onClick={() => cancelOrder(order._id)}
+                            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                      {order.status === "In transit" && (
+                        <>
+                          <button className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
+                            <a href={`invoice/${order._id}`}>Invoice</a>
+                          </button>
+                          <button
+                            onClick={() => markDelivered(order._id)}
+                            className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
+                          >
+                            Mark Delivered
+                          </button>
+                          <button
+                            onClick={() => cancelOrder(order._id)}
                             className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
                           >
                             Cancel
@@ -393,12 +428,18 @@ export default function OrdersPage() {
                         </>
                       )}
                       {order.status === "canceled" && (
+                        <>
+                       
                         <button
                           disabled
                           className="bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed"
                         >
                           Canceled
                         </button>
+                        <button className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">
+                        <a href={`invoice/${order._id}`}>Invoice</a>
+                      </button>
+                      </>
                       )}
                       {order.status === "Delivered" && (
                         <>
@@ -409,6 +450,7 @@ export default function OrdersPage() {
                       )}
                     </div>
                   </td>
+
                 </tr>
               ))}
           </tbody>

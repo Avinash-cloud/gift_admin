@@ -25,6 +25,7 @@ export default function ProductForm({
   type: existingtype,
   id: existingid,
   custom: existingcustom,
+  tags: existingtags,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [stockQuantity, setStockQuantity] = useState(existingStock || "");
@@ -54,6 +55,8 @@ export default function ProductForm({
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubCategories] = useState([]);
+  const [newTag, setNewTag] = useState("");
+  const [tags, setTags] = useState(existingtags || []);
   const router = useRouter();
 
   console.log("productProperties", productProperties);
@@ -90,6 +93,7 @@ export default function ProductForm({
       sku,
       id,
       custom,
+      tags
     };
     console.log(data);
     if (_id) {
@@ -181,6 +185,30 @@ export default function ProductForm({
   }
 
 
+
+  const handleTagInput = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+  
+      const tagsToAdd = newTag
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag);
+  
+      if (tagsToAdd.length > 0) {
+        setTags((prevTags) => [...prevTags, ...tagsToAdd]);
+        setNewTag(""); // Clear the input
+      }
+    }
+  };
+
+
+  
+const removeField = (index) => {
+  const updatedTags = [...tags];
+  updatedTags.splice(index, 1);
+  setTags(updatedTags);
+};
   
 
   return (
@@ -415,6 +443,39 @@ export default function ProductForm({
           Add Point
         </button>
       </div>
+
+
+      <div className="mb-4 w-1/2 max-md:w-full">
+              <label className="block text-sm font-medium">Tags</label>
+              <div className="flex mb-2">
+                <input
+                  type="text"
+                  placeholder="Add tags separated by commas"
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyDown={(e) => handleTagInput(e)}
+                  className="mt-1 p-2 w-full border rounded"
+                />
+              </div>
+              {tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className=" items-center align-middle m-2  mb-2 border rounded bg-green-200/50 italic"
+                >
+                  <span className="p-2 ">{tag}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeField("tags", index)}
+                    className="ml-2 text-red-500"
+                  >
+                    <img
+                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAECElEQVR4nO2Y21IaWRiFeYB4B2JLBLRBGwwedqONCgooB+UghxiNOjd5APVu5jmnOCggSIhBoHezUXByYdWe6gsMM1H7QKMzVayq727/618L7YbaKtVQQw011P9G7aM4gb9ERwblj79ER/gdAzH/cZw8uf8t+fDX8Ue2c5xklPbvHCcZ3pvf8eNo71RZ86P42f1hAnfpfI63Okdxh2L+hzH6/jDB9e64/5z4Qxnzg92zzkEM/8J+rNX51H+JzmGM7uzHuKd2tPdj/ZW424uetj9F8fNEUOcgKvvfqXMQZXiPl3bc7UVPZJm34wHiNhl6uPsYxi+SDKNWckdyCX7mLhlGQv58hvbezpjkAo1odOQ2sc3eJnawIPEdSSX4s/zMrRjvxDZb29t4p5KjZjwAWrtB2IoFsSC7QdSKBwWfCRTz061YgFPS80U1wwHQjPggivixIGE/akW2nl2IQn4aRXycEl6SS3ChLdgM+bAIEBv8dTEfngttcf149KVmwAvgthdy25tYGO8/AqCQh4bBTU7OrKKqB7yADbghDHiwEGzAjdjghqPh99Cs38NJmVENUqzPzTR864j1bWAh+HNSzrI+t+I/UZ5U3esCda8LNjZdWAnqXidi3c7XCd9bouZeg3XPGu6HmnsNVV87/GMJlwPU1ldgbX0Fy+HGtYKqTuZtwnd17XKAG+cyvHEyWArVNebtw3d17aBBddUOq6tLWAzfV5dQ1Un/N8Lz+s4A+pqxc9cOOxYJqiyDwb4upYT/tgS4b8sAS2Px7UuUAaAr9gWuYl/A8phHFfBGJcrARn9dnOO+Ls7hvliwoQqwvW6Jss1Gl+dnufL8B6wIc7OoZHulEsU5C3P1wYqubFYsCH9OwtninGWwb6ayjaKL1hmuNEthQawUKloszBVFgeLsDBQ7U6KowfwlChRFX1JmrmiZxiJARYv58dO8okhwSZmh2NkSZVK2RIEi6cK0ibucMWERoKL5Z/iu8hQJCtMkFOtRUqpEgSTpvJnkCmYSC5E3k+jiifCPJUgS5E0kFOuVM/VZgg+fm5rk8lOTWIjclBFdGI2CD2Ge1IP81CQU65kzGOSVyM7MjOSMBjZnNGAhLgx6UeG74s/yMzkR3jmDoZGyaqRfq2T0euJcP/FwoZ/AL3E+8R5d6HSSX3/8zDk/K+Svn3hIGQzSL7Z4ZXW6k/P3OvwcWd24rPC9JbK6cfTyDl1/N9UZgjjLjhP432QIAqV12r6/eDIEAbLEGHxmhzI31Bli9CwzpsVd0mNalNb2H763REY7Cnt3ZLTa31VKKq1Wn6Y0moeUWt1QMnxXvGdKrWb5HWm1Wt6NtJD+HB3VpjQy3ggildJo3qU0GnkP7FBDDTWU6i30N4TdCC3jWDERAAAAAElFTkSuQmCC"
+                      width={15}
+                    />
+                  </button>
+                </span>
+              ))}
+            </div>
 
       <label>Price (in USD)</label>
       <input
