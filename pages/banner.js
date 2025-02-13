@@ -176,7 +176,7 @@ const customStyles = {
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 // Modal.setAppElement('#yourAppElement');
 
-export default function banner({ initialProducts, serverIP }) {
+export default function Banner({ initialProducts, serverIP }) {
     const URL = process.env.NEXT_PUBLIC_UPLOAD_API;
     const [loading, setLoading] = useState(false);
     const [banner, setBanner] = useState(initialProducts)
