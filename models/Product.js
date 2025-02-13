@@ -1,4 +1,4 @@
-import mongoose, {model, Schema, models} from "mongoose";
+import mongoose, { model, Schema, models } from "mongoose";
 import { Unique } from "typeorm";
 
 const ProductSchema = new Schema({
@@ -14,7 +14,7 @@ const ProductSchema = new Schema({
   description: {
     type: String,
     required: true,
-    
+
   },
   tags: {
     type: [String]
@@ -31,41 +31,44 @@ const ProductSchema = new Schema({
   images: {
     type: [String], // Array of image URLs
     validate: {
-      validator: function(arr) {
+      validator: function (arr) {
         return arr.every(url => typeof url === 'string');
       },
       message: 'Each image URL must be a string'
     }
   },
-  category: {type:mongoose.Types.ObjectId, ref:'Category'},
-  properties: {type:Object},
+  category: { type: mongoose.Types.ObjectId, ref: 'Category' },
+  properties: {
+    type: String,
+    trim: true,
+  },
 
-  subcategory: {type:mongoose.Types.ObjectId, ref:'SubCategory'},
-  property: {type:Object},
+  subcategory: { type: mongoose.Types.ObjectId, ref: 'SubCategory' },
+  property: { type: Object },
 
   sku: {
     type: String,
     trim: true,
-    
+
   },
   custom: {
     type: Boolean,
     default: false,
-    
+
   },
   id: {
     type: String,
     trim: true,
-    
-  },
-  shortDescriptionPoints:{
-    type: [String], // Array of image URLs
-    
 
   },
-  type:{
+  shortDescriptionPoints: {
+    type: [String], // Array of image URLs
+
+
+  },
+  type: {
     type: String,
-    
+
   },
   stockQuantity: {
     type: String,

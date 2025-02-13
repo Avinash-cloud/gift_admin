@@ -272,6 +272,7 @@ const removeField = (index) => {
         value={productProperties}
         onChange={(ev) => setProductProperties(ev.target.value)}
       >
+        <option value="">Uncategorized</option>
         {propertiesToFill.length > 0 &&
           propertiesToFill.map((p) => (
             <option key={p.name} value={p.name}>
