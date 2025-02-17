@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 export default function Setting() {
   const [isOtpSent, setIsOtpSent] = useState(false); // Tracks OTP sent status
-  const [email, setEmail] = useState("avipurohit27@gmail.com"); // Email input
+  const [email, setEmail] = useState("rakesh@internationalgift.in"); // Email input
   const [otp, setOtp] = useState(""); // OTP input
   const [sentOtp, setSentOtp] = useState(null);
   const [newPassword, setNewPassword] = useState("");
