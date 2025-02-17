@@ -183,7 +183,7 @@ export default function banner({ initialProducts, serverIP }) {
     const [images, setImages] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
 
-console.log((banner));
+    console.log("banner",);
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -272,7 +272,7 @@ console.log((banner));
 
     const generateCoolId = (id) => {
         // Select a part of the original ID, for example, the first 4 and last 4 characters
-        const prefix = "EBB-"; // You can add a prefix if needed
+        const prefix = "IGB-"; // You can add a prefix if needed
         const shortId = `${id.slice(0, 4)}-${id.slice(-4)}`; // Taking first 4 and last 4 characters
         return `${prefix}${shortId}`;
     };
@@ -435,10 +435,10 @@ console.log((banner));
                                                         <div className="flex items-center">
 
                                                             <img
-                                                                src={module.imageURL}
+                                                                src={module.images}
                                                                 alt="Banner"
                                                                 className="h-auto w-16 max-h-16 object-cover rounded-lg shadow-sm"
-                                                                onClick={() => handleImageClick(module.imageURL)}
+                                                                onClick={() => handleImageClick(module.images)}
                                                             />
                                                         </div>
                                                     </td>
@@ -509,7 +509,7 @@ export async function getServerSideProps(context) {
 
     // Retrieve cookies from the incoming request
     const cookies = req.headers.cookie;
-    
+
     const url = process.env.PUBLIC_URL;
     const response = await fetch(`${url}/api/banner`, {
         headers: {
@@ -520,10 +520,11 @@ export async function getServerSideProps(context) {
     }); // Replace with your API endpoint
     // console.log(response);
 
-    const result = await response.json(); 
+    const result = await response.json();
 
-    console.log("result: " , result);
-    
+   
+// console.log("result",result);
+
 
     let initialProducts = [];
 
@@ -531,18 +532,19 @@ export async function getServerSideProps(context) {
     // console.log("hellow",serverIP)
 
 
-    if (result.success) {
+    // if (result.success) {
         // Decrypt the encrypted data
-        const decryptedData = (result.data);
-        const stores = JSON.parse(decryptedData);
+        // const decryptedData = (result);
+        // const stores = JSON.parse(decryptedData);
 
-        initialProducts = decryptedData; // Extract the actual data from the decrypted object
-    }
+        initialProducts = result; // Extract the actual data from the decrypted object
+    // }
 
+    // console.log("initialProducts: ", initialProducts);
     return {
         props: {
             initialProducts,
-            
+
         },
     };
 }

@@ -2,7 +2,7 @@ import mongoose, {model, Schema, models} from "mongoose";
 
 const BannerSchema = new Schema({
  
-  images: [{type:String}],
+  images: {type:String},
 
 }, {
   timestamps: true,

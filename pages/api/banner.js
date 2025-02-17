@@ -16,9 +16,11 @@ export default async function handle(req, res) {
   }
 
   if (method === 'POST') {
-    const {images} = req.body;
+    console.log(req.body);
+    
+    const {imageURL} = req.body;
     const productDoc = await Banner.create({
-      images
+      images: imageURL
     })
     res.json(productDoc);
   }
