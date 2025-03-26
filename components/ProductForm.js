@@ -6,7 +6,7 @@ import { ReactSortable } from "react-sortablejs";
 // import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
-
+const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 export default function ProductForm({
   _id,
@@ -189,12 +189,12 @@ export default function ProductForm({
   const handleTagInput = (e) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-  
+
       const tagsToAdd = newTag
         .split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag);
-  
+
       if (tagsToAdd.length > 0) {
         setTags((prevTags) => [...prevTags, ...tagsToAdd]);
         setNewTag(""); // Clear the input
@@ -203,13 +203,13 @@ export default function ProductForm({
   };
 
 
-  
-const removeField = (index) => {
-  const updatedTags = [...tags];
-  updatedTags.splice(index, 1);
-  setTags(updatedTags);
-};
-  
+
+  const removeField = (index) => {
+    const updatedTags = [...tags];
+    updatedTags.splice(index, 1);
+    setTags(updatedTags);
+  };
+
 
   return (
     <form onSubmit={saveProduct}>
@@ -393,7 +393,7 @@ const removeField = (index) => {
 
       <div>
         <label>Description</label>
-        <ReactQuill
+        {/* <ReactQuill
           value={description}
           onChange={setDescription}
           placeholder="Enter description..."
@@ -413,6 +413,11 @@ const removeField = (index) => {
             'bold', 'italic', 'underline', 'strike',
             'align', 'color', 'background', 'link', 'image', 'blockquote', 'code-block'
           ]}
+        /> */}
+        <JoditEditor
+          value={description}
+          config={editorConfig}
+          onChange={(value) => setDescription(value)}
         />
       </div>
 
@@ -447,36 +452,36 @@ const removeField = (index) => {
 
 
       <div className="mb-4 w-1/2 max-md:w-full">
-              <label className="block text-sm font-medium">Tags</label>
-              <div className="flex mb-2">
-                <input
-                  type="text"
-                  placeholder="Add tags separated by commas"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyDown={(e) => handleTagInput(e)}
-                  className="mt-1 p-2 w-full border rounded"
-                />
-              </div>
-              {tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className=" items-center align-middle m-2  mb-2 border rounded bg-green-200/50 italic"
-                >
-                  <span className="p-2 ">{tag}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeField("tags", index)}
-                    className="ml-2 text-red-500"
-                  >
-                    <img
-                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAECElEQVR4nO2Y21IaWRiFeYB4B2JLBLRBGwwedqONCgooB+UghxiNOjd5APVu5jmnOCggSIhBoHezUXByYdWe6gsMM1H7QKMzVayq727/618L7YbaKtVQQw011P9G7aM4gb9ERwblj79ER/gdAzH/cZw8uf8t+fDX8Ue2c5xklPbvHCcZ3pvf8eNo71RZ86P42f1hAnfpfI63Okdxh2L+hzH6/jDB9e64/5z4Qxnzg92zzkEM/8J+rNX51H+JzmGM7uzHuKd2tPdj/ZW424uetj9F8fNEUOcgKvvfqXMQZXiPl3bc7UVPZJm34wHiNhl6uPsYxi+SDKNWckdyCX7mLhlGQv58hvbezpjkAo1odOQ2sc3eJnawIPEdSSX4s/zMrRjvxDZb29t4p5KjZjwAWrtB2IoFsSC7QdSKBwWfCRTz061YgFPS80U1wwHQjPggivixIGE/akW2nl2IQn4aRXycEl6SS3ChLdgM+bAIEBv8dTEfngttcf149KVmwAvgthdy25tYGO8/AqCQh4bBTU7OrKKqB7yADbghDHiwEGzAjdjghqPh99Cs38NJmVENUqzPzTR864j1bWAh+HNSzrI+t+I/UZ5U3esCda8LNjZdWAnqXidi3c7XCd9bouZeg3XPGu6HmnsNVV87/GMJlwPU1ldgbX0Fy+HGtYKqTuZtwnd17XKAG+cyvHEyWArVNebtw3d17aBBddUOq6tLWAzfV5dQ1Un/N8Lz+s4A+pqxc9cOOxYJqiyDwb4upYT/tgS4b8sAS2Px7UuUAaAr9gWuYl/A8phHFfBGJcrARn9dnOO+Ls7hvliwoQqwvW6Jss1Gl+dnufL8B6wIc7OoZHulEsU5C3P1wYqubFYsCH9OwtninGWwb6ayjaKL1hmuNEthQawUKloszBVFgeLsDBQ7U6KowfwlChRFX1JmrmiZxiJARYv58dO8okhwSZmh2NkSZVK2RIEi6cK0ibucMWERoKL5Z/iu8hQJCtMkFOtRUqpEgSTpvJnkCmYSC5E3k+jiifCPJUgS5E0kFOuVM/VZgg+fm5rk8lOTWIjclBFdGI2CD2Ge1IP81CQU65kzGOSVyM7MjOSMBjZnNGAhLgx6UeG74s/yMzkR3jmDoZGyaqRfq2T0euJcP/FwoZ/AL3E+8R5d6HSSX3/8zDk/K+Svn3hIGQzSL7Z4ZXW6k/P3OvwcWd24rPC9JbK6cfTyDl1/N9UZgjjLjhP432QIAqV12r6/eDIEAbLEGHxmhzI31Bli9CwzpsVd0mNalNb2H763REY7Cnt3ZLTa31VKKq1Wn6Y0moeUWt1QMnxXvGdKrWb5HWm1Wt6NtJD+HB3VpjQy3ggildJo3qU0GnkP7FBDDTWU6i30N4TdCC3jWDERAAAAAElFTkSuQmCC"
-                      width={15}
-                    />
-                  </button>
-                </span>
-              ))}
-            </div>
+        <label className="block text-sm font-medium">Tags</label>
+        <div className="flex mb-2">
+          <input
+            type="text"
+            placeholder="Add tags separated by commas"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            onKeyDown={(e) => handleTagInput(e)}
+            className="mt-1 p-2 w-full border rounded"
+          />
+        </div>
+        {tags.map((tag, index) => (
+          <span
+            key={index}
+            className=" items-center align-middle m-2  mb-2 border rounded bg-green-200/50 italic"
+          >
+            <span className="p-2 ">{tag}</span>
+            <button
+              type="button"
+              onClick={() => removeField("tags", index)}
+              className="ml-2 text-red-500"
+            >
+              <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAECElEQVR4nO2Y21IaWRiFeYB4B2JLBLRBGwwedqONCgooB+UghxiNOjd5APVu5jmnOCggSIhBoHezUXByYdWe6gsMM1H7QKMzVayq727/618L7YbaKtVQQw011P9G7aM4gb9ERwblj79ER/gdAzH/cZw8uf8t+fDX8Ue2c5xklPbvHCcZ3pvf8eNo71RZ86P42f1hAnfpfI63Okdxh2L+hzH6/jDB9e64/5z4Qxnzg92zzkEM/8J+rNX51H+JzmGM7uzHuKd2tPdj/ZW424uetj9F8fNEUOcgKvvfqXMQZXiPl3bc7UVPZJm34wHiNhl6uPsYxi+SDKNWckdyCX7mLhlGQv58hvbezpjkAo1odOQ2sc3eJnawIPEdSSX4s/zMrRjvxDZb29t4p5KjZjwAWrtB2IoFsSC7QdSKBwWfCRTz061YgFPS80U1wwHQjPggivixIGE/akW2nl2IQn4aRXycEl6SS3ChLdgM+bAIEBv8dTEfngttcf149KVmwAvgthdy25tYGO8/AqCQh4bBTU7OrKKqB7yADbghDHiwEGzAjdjghqPh99Cs38NJmVENUqzPzTR864j1bWAh+HNSzrI+t+I/UZ5U3esCda8LNjZdWAnqXidi3c7XCd9bouZeg3XPGu6HmnsNVV87/GMJlwPU1ldgbX0Fy+HGtYKqTuZtwnd17XKAG+cyvHEyWArVNebtw3d17aBBddUOq6tLWAzfV5dQ1Un/N8Lz+s4A+pqxc9cOOxYJqiyDwb4upYT/tgS4b8sAS2Px7UuUAaAr9gWuYl/A8phHFfBGJcrARn9dnOO+Ls7hvliwoQqwvW6Jss1Gl+dnufL8B6wIc7OoZHulEsU5C3P1wYqubFYsCH9OwtninGWwb6ayjaKL1hmuNEthQawUKloszBVFgeLsDBQ7U6KowfwlChRFX1JmrmiZxiJARYv58dO8okhwSZmh2NkSZVK2RIEi6cK0ibucMWERoKL5Z/iu8hQJCtMkFOtRUqpEgSTpvJnkCmYSC5E3k+jiifCPJUgS5E0kFOuVM/VZgg+fm5rk8lOTWIjclBFdGI2CD2Ge1IP81CQU65kzGOSVyM7MjOSMBjZnNGAhLgx6UeG74s/yMzkR3jmDoZGyaqRfq2T0euJcP/FwoZ/AL3E+8R5d6HSSX3/8zDk/K+Svn3hIGQzSL7Z4ZXW6k/P3OvwcWd24rPC9JbK6cfTyDl1/N9UZgjjLjhP432QIAqV12r6/eDIEAbLEGHxmhzI31Bli9CwzpsVd0mNalNb2H763REY7Cnt3ZLTa31VKKq1Wn6Y0moeUWt1QMnxXvGdKrWb5HWm1Wt6NtJD+HB3VpjQy3ggildJo3qU0GnkP7FBDDTWU6i30N4TdCC3jWDERAAAAAElFTkSuQmCC"
+                width={15}
+              />
+            </button>
+          </span>
+        ))}
+      </div>
 
       <label>Price (in USD)</label>
       <input
@@ -498,3 +503,190 @@ const removeField = (index) => {
     </form>
   );
 }
+
+
+
+
+const copyStringToClipboard = (str) => {
+  const el = document.createElement("textarea");
+  el.value = str;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+};
+
+const facilityMergeFields = [
+  "FacilityNumber",
+  "FacilityName",
+  "Address",
+  "MapCategory",
+  "Latitude",
+  "Longitude",
+  "ReceivingPlant",
+  "TrunkLine",
+  "SiteElevation"
+];
+const inspectionMergeFields = [
+  "InspectionCompleteDate",
+  "InspectionEventType"
+];
+
+const createOptionGroupElement = (mergeFields, optionGroupLabel) => {
+  const optionGroupElement = document.createElement("optgroup");
+  optionGroupElement.setAttribute("label", optionGroupLabel);
+  mergeFields.forEach((field) => {
+      const optionElement = document.createElement("option");
+      optionElement.setAttribute("class", "merge-field-select-option");
+      optionElement.setAttribute("value", field);
+      optionElement.text = field;
+      optionGroupElement.appendChild(optionElement);
+  });
+  return optionGroupElement;
+};
+
+const buttons = [
+  "undo",
+  "redo",
+  "|",
+  "bold",
+  "strikethrough",
+  "underline",
+  "italic",
+  "|",
+  "superscript",
+  "subscript",
+  "|",
+  "align",
+  "|",
+  "ul",
+  "ol",
+  "outdent",
+  "indent",
+  "|",
+  "font",
+  "fontsize",
+  "brush",
+  "paragraph",
+  "|",
+  "image",
+  "link",
+  "table",
+  "|",
+  "hr",
+  "eraser",
+  "copyformat",
+  "|",
+  "fullsize",
+  "selectall",
+  "print",
+  "|",
+  "source",
+  "|",
+  {
+      name: "insertMergeField",
+      tooltip: "Insert Merge Field",
+      iconURL: "/images/merge.png", // Update for public folder
+      popup: (editor) => {
+          const onSelected = (e) => {
+              const mergeField = e.target.value;
+              if (mergeField) {
+                  editor.selection.insertNode(
+                      editor.create.inside.fromHTML(`{{${mergeField}}}`)
+                  );
+              }
+          };
+
+          const divElement = editor.create.div("merge-field-popup");
+
+          const labelElement = document.createElement("label");
+          labelElement.setAttribute("class", "merge-field-label");
+          labelElement.textContent = "Merge field: ";
+          divElement.appendChild(labelElement);
+
+          const selectElement = document.createElement("select");
+          selectElement.setAttribute("class", "merge-field-select");
+          selectElement.appendChild(createOptionGroupElement(facilityMergeFields, "Facility"));
+          selectElement.appendChild(createOptionGroupElement(inspectionMergeFields, "Inspection"));
+          selectElement.onchange = onSelected;
+          divElement.appendChild(selectElement);
+
+          return divElement;
+      }
+  },
+  {
+      name: "copyContent",
+      tooltip: "Copy HTML to Clipboard",
+      iconURL: "/images/copy.png", // Update for public folder
+      exec: (editor) => {
+          const html = editor.value;
+          copyStringToClipboard(html);
+      }
+  }
+];
+
+// const editorConfig = {
+//     readonly: false,
+//     toolbar: true,
+//     spellcheck: true,
+//     language: "en",
+//     toolbarButtonSize: "medium",
+//     toolbarAdaptive: false,
+//     showCharsCounter: true,
+//     showWordsCounter: true,
+//     showXPathInStatusbar: false,
+//     askBeforePasteHTML: true,
+//     askBeforePasteFromWord: true,
+//     buttons: buttons,
+//     uploader: {
+//         insertImageAsBase64URI: true
+//     },
+
+//     height: 842,
+//     style: {
+//         font: [
+//             { name: "Arial", value: "Arial" },
+//             { name: "Verdana", value: "Verdana" },
+//             { name: "Poppins", value: "'Poppins', sans-serif" } // Added Poppins font
+//         ]
+//     }
+// };
+
+
+const editorConfig = {
+  readonly: false,
+  toolbar: true,
+  spellcheck: true,
+  language: "en",
+  toolbarButtonSize: "medium",
+  toolbarAdaptive: false,
+  showCharsCounter: true,
+  showWordsCounter: true,
+  showXPathInStatusbar: false,
+  askBeforePasteHTML: true,
+  askBeforePasteFromWord: true,
+  buttons: buttons,
+  uploader: {
+      insertImageAsBase64URI: true
+  },
+  height: 842,
+  style: {
+      font: [
+
+          { name: "Poppins", value: "'Poppins', sans-serif" } // Added Poppins font
+      ]
+  },
+  controls: {
+      font: {
+          list: {
+
+              "Poppins": "'Poppins', sans-serif" // Add Poppins here too
+          }
+      },
+
+  }
+};
+

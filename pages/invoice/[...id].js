@@ -265,8 +265,11 @@ export default function EditProductPage() {
                         {totalTaxPrice}
                       </td>
                       <td className="border-2 border-black px-4 py-2 font-bold">
-                        {totalDiscountedPrice}
+                        {totalDiscountedPrice != order.paidAmount
+                          ? `Paid: ${Math.round(order.paidAmount)} (Discount code applied)`
+                          : `Paid: ${Math.round(order.paidAmount)}`}
                       </td>
+
                     </tr>
                   </tbody>
                 </table>
@@ -305,7 +308,7 @@ export default function EditProductPage() {
               </div>
               <div className="border-2 border-black pl-4 flex flex-col items-start">
                 <div className="text-xl font-bold"> Invoice Value: </div>
-                <div className=" ">{totalDiscountedPrice}</div>
+                <div className=" ">{Math.round(order.paidAmount)}</div>
               </div>
               <div className="border-2 border-black pl-4 flex flex-col items-start">
                 <div className="text-xl font-bold">Payment States: </div>

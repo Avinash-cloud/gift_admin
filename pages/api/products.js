@@ -2,6 +2,14 @@ import {Product} from "@/models/Product";
 import {mongooseConnect} from "@/lib/mongoose";
 import {isAdminRequest} from "@/pages/api/auth/[...nextauth]";
 
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "20mb", // Set to 20MB
+    },
+  },
+};
 export default async function handle(req, res) {
   const {method} = req;
   await mongooseConnect();
