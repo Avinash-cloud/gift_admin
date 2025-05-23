@@ -146,6 +146,14 @@ export default function EditProductPage() {
                     minute: "2-digit",
                   })}
                 </div>
+                {order.gst && (
+                  <div className="text-xl">
+                    <span className="font-bold text-xl">
+                      GST No:
+                    </span>{" "}
+                    {order.gst}
+                  </div>
+                )}
               </div>
             </div>
 
