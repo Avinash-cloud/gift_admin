@@ -37,10 +37,10 @@ export default function Products() {
 
   const filteredProducts = products.filter((product) => {
     // Filter by search term (product title)
-    const matchesSearchTerm = product.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
+    const matchesSearchTerm =
+      product?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product?.sku?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product?.id?.toLowerCase().includes(searchTerm.toLowerCase());
     // Filter by stock status
     const matchesStockStatus =
       filter === "all" ||
@@ -150,7 +150,7 @@ export default function Products() {
   );
   const lowStockProducts = products.filter(
     (product) => product.stockQuantity > 0 &&
-    product.stockQuantity <= 15);
+      product.stockQuantity <= 15);
   const StockProducts = products.filter(
     (product) => product.stockQuantity > 15
   );
@@ -171,7 +171,7 @@ export default function Products() {
         </Link>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 overflow-x-auto h-auto w-full">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-8 overflow-x-auto h-auto w-full">
         <form
           onSubmit={handleSubmit}
           className="flex flex-col sm:flex-row gap-2 justify-center items-center"
@@ -190,18 +190,18 @@ export default function Products() {
           </button>
         </form>
 
-        <div className="flex flex-col sm:flex-row items-center gap-2">
+        {/* <div className="flex flex-col sm:flex-row items-center gap-2">
           <label htmlFor="" className="font-semibold">
             Search
           </label>
           <input
             type="search"
-            placeholder="Search by title"
+            placeholder="Search by title or SKU or group SKU"
             value={searchTerm}
             onChange={handleSearch}
-            className="border px-2 py-1 rounded w-full sm:w-48"
+            className="border px-2 py-1 rounded w-full sm:w-auto h-9"
           />
-        </div>
+        </div> */}
 
         <div className="flex flex-col sm:flex-row gap-2">
           <CSVLink
@@ -251,7 +251,7 @@ export default function Products() {
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col sm:flex-row  gap-4 overflow-x-auto h-auto w-full">
         <button
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           onClick={deleteSelectedProducts}
@@ -259,6 +259,19 @@ export default function Products() {
         >
           Delete Selected
         </button>
+
+        <div className="flex flex-col sm:flex-row items-center gap-2 justify-end">
+          <label htmlFor="" className=" text-2xl font-bold">
+            Search
+          </label>
+          <input
+            type="search"
+            placeholder="Search by title or SKU or group SKU"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="border px-2 py-1 rounded  w-80"
+          />
+        </div>
       </div>
 
       <div className="flex justify-end items-center gap-4 p-4 bg-gray-100 rounded-lg shadow-md">
@@ -282,7 +295,7 @@ export default function Products() {
           <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
             <span className="text-lg font-semibold text-gray-700">Low: </span>
             <span className="text-xl font-bold text-yellow-600">
-               {lowStockProducts.length}
+              {lowStockProducts.length}
             </span>
           </div>
 
@@ -380,14 +393,12 @@ export default function Products() {
             {currentPageData.map((product) => (
               <tr
                 key={product._id}
-                className={` divide-x divide-gray-200 ${
-                  product.stockQuantity == 0 ? "bg-red-500/20" : ""
-                }
-              ${
-                product.stockQuantity <= 15 && product.stockQuantity > 0
-                  ? "bg-yellow-500/20"
-                  : ""
-              }
+                className={` divide-x divide-gray-200 ${product.stockQuantity == 0 ? "bg-red-500/20" : ""
+                  }
+              ${product.stockQuantity <= 15 && product.stockQuantity > 0
+                    ? "bg-yellow-500/20"
+                    : ""
+                  }
               ${product.stockQuantity > 10 ? "bg-green-500/20" : ""}`}
               >
                 <td className="whitespace-nowrap px-4 py-4">

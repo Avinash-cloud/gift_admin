@@ -72,6 +72,16 @@ const Cuppon = () => {
         }
     };
 
+    const handleVisibility = async (isVisible, editingCoupon) => {
+        const updatedVisibility = !isVisible;
+        await fetch(`/api/coupons?id=${editingCoupon}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isVisible: updatedVisibility }),
+        });
+        fetchCoupons();
+    };
+
     return (
         <Layout>
             <div className="max-w-4xl mx-auto p-6">
@@ -138,6 +148,7 @@ const Cuppon = () => {
                                 <th className="px-4 py-2 text-left">Code</th>
                                 <th className="px-4 py-2 text-left">Discount Percentage</th>
                                 <th className="px-4 py-2 text-left">Actions</th>
+                                <th className='px-4 py-2 text-left'>Coupon visibility </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -158,6 +169,15 @@ const Cuppon = () => {
                                             className="text-red-600 hover:text-red-800"
                                         >
                                             Delete
+                                        </button>
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {coupon.isVisible ? 'Visible' : 'Hidden'}
+                                        <button
+                                            onClick={() => handleVisibility(coupon.isVisible, coupon._id )}
+                                            className="text-blue-600 hover:text-blue-800 ml-2"
+                                        >
+                                            {coupon.isVisible ? 'Hide' : 'Show'}
                                         </button>
                                     </td>
                                 </tr>

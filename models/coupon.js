@@ -23,6 +23,10 @@ const CouponSchema = new mongoose.Schema({
     type: Number,
     required: false, // This field may or may not be present
   },
+  isVisible: {
+    type: Boolean,
+    default: true,
+  },
 }, { timestamps: true });
 
 export default mongoose.models.Coupon || mongoose.model('Coupon', CouponSchema);
