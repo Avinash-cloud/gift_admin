@@ -192,7 +192,7 @@ export default function ProductForm({
 
       const tagsToAdd = newTag
         .split(",")
-        .map((tag) => tag.trim())
+        ?.map((tag) => tag.trim())
         .filter((tag) => tag);
 
       if (tagsToAdd.length > 0) {
@@ -261,7 +261,7 @@ export default function ProductForm({
       <select value={category} onChange={(ev) => setCategory(ev.target.value)}>
         <option value="">Uncategorized</option>
         {categories.length > 0 &&
-          categories.map((c) => (
+          categories?.map((c) => (
             <option key={c._id} value={c._id}>
               {c.name}
             </option>
@@ -274,7 +274,7 @@ export default function ProductForm({
       >
         <option value="">Uncategorized</option>
         {propertiesToFill.length > 0 &&
-          propertiesToFill.map((p) => (
+          propertiesToFill?.map((p) => (
             <option key={p.name} value={p.name}>
               {p.name}
             </option>
@@ -282,7 +282,7 @@ export default function ProductForm({
       </select>
 
       {/* {propertiesToFill.length > 0 &&
-        propertiesToFill.map((p) => (
+        propertiesToFill?.map((p) => (
           <div key={p.name} className="">
             <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
             <div>
@@ -290,7 +290,7 @@ export default function ProductForm({
                 value={productProperties[p.name]}
                 onChange={(ev) => setProductProp(p.name, ev.target.value)}
               >
-                {p.values.map((v) => (
+                {p.values?.map((v) => (
                   <option key={v} value={v}>
                     {v}
                   </option>
@@ -307,7 +307,7 @@ export default function ProductForm({
       >
         <option value="">Uncategorized</option>
         {subcategories.length > 0 &&
-          subcategories.map((sc) => (
+          subcategories?.map((sc) => (
             <option key={sc._id} value={sc._id}>
               {sc.name}
             </option>
@@ -315,7 +315,7 @@ export default function ProductForm({
       </select>
 
       {propertyToFill.length > 0 &&
-        propertyToFill.map((p) => (
+        propertyToFill?.map((p) => (
           <div key={p.name} className="">
             <label>{p.name[0].toUpperCase() + p.name.substring(1)}</label>
             <div>
@@ -323,7 +323,7 @@ export default function ProductForm({
                 value={productProperty[p.name]}
                 onChange={(ev) => setProductProp(p.name, ev.target.value)}
               >
-                {p.values.map((v) => (
+                {p.values?.map((v) => (
                   <option key={v} value={v}>
                     {v}
                   </option>
@@ -341,7 +341,7 @@ export default function ProductForm({
           setList={updateImagesOrder}
         >
           {!!images?.length &&
-            images.map((link) => (
+            images?.map((link) => (
               <div
                 key={link}
                 className="relative h-24 bg-white p-4 shadow-sm rounded-sm border border-gray-200 cursor-pointer"
@@ -422,7 +422,7 @@ export default function ProductForm({
       </div>
 
       <label>Short Description Points</label>
-      {shortDescriptionPoints.map((point, index) => (
+      {shortDescriptionPoints?.map((point, index) => (
         <div key={index} className="flex items-center gap-2 mb-2">
           <input
             type="text"
@@ -463,7 +463,7 @@ export default function ProductForm({
             className="mt-1 p-2 w-full border rounded"
           />
         </div>
-        {tags.map((tag, index) => (
+        {tags?.map((tag, index) => (
           <span
             key={index}
             className=" items-center align-middle m-2  mb-2 border rounded bg-green-200/50 italic"
