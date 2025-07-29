@@ -92,7 +92,7 @@ const URL = process.env.NEXT_PUBLIC_UPLOAD_API;
                             className="border p-3 rounded flex justify-between items-center"
                         >
                             <div>
-                                <p><strong>URL:</strong> {cat.url}</p>
+                                <p><strong>URL:</strong> <a href={`http://internationalgift.in/catalog/${cat.url}`} className="text-blue-600 underline">{cat.url}</a></p>
                                 <a href={cat.pdfUrl} className="text-blue-600 underline" target="_blank">
                                     View PDF
                                 </a>
