@@ -33,7 +33,7 @@ export default async function handler(req, res) {
           const blogs = await Blog.create(req.body);
           res.status(201).json({ success: true, data: blogs });
         } catch (error) {
-          //console.log(error);
+          console.log(error);
           res.status(400).json({ success: false });
         }
         break;
